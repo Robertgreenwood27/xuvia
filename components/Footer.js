@@ -83,7 +83,7 @@ export default function Footer() {
             Info
           </p>
           <ul className="space-y-3 text-sm" style={{ color: "var(--muted)" }}>
-            <li>Fulfilled by Printful</li>
+            <li>Fulfilled by Printify</li>
             <li>Ships worldwide</li>
             <li>Print-on-demand</li>
             <li>Returns handled case by case</li>

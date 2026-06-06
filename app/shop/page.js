@@ -51,7 +51,7 @@ export default function ShopPage() {
             className="mt-4 text-sm"
             style={{ color: "var(--muted)", maxWidth: "400px", lineHeight: "1.75" }}
           >
-            Every piece is made to order. Full sublimation. Ships via Printful.
+            Every piece is made to order. Full sublimation. Ships via Printify.
           </p>
         </div>
       </div>

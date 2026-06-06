@@ -1,58 +1,18 @@
-/**
- * /api/products
- *
- * If PRINTFUL_API_KEY is set, fetches live store products from Printful.
- * Otherwise falls back to the local catalog in lib/products.js.
- */
-
-import { products } from "@/lib/products";
+import { products as localProducts } from "@/lib/products";
+import { getProducts, normalizeProduct } from "@/lib/printify";
 
 export async function GET() {
-  const apiKey = process.env.PRINTFUL_API_KEY;
-
-  if (apiKey) {
+  if (process.env.PRINTIFY_API_KEY && process.env.PRINTIFY_SHOP_ID) {
     try {
-      const res = await fetch("https://api.printful.com/store/products", {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-        next: { revalidate: 3600 }, // Cache for 1 hour
+      const raw = await getProducts();
+      const merged = raw.map((p) => {
+        const local = localProducts.find((lp) => lp.printifyProductId === p.id);
+        return normalizeProduct(p, local || {});
       });
-
-      if (!res.ok) {
-        throw new Error(`Printful API error: ${res.status}`);
-      }
-
-      const data = await res.json();
-
-      // Merge Printful data with local catalog metadata
-      const merged = (data.result || []).map((pf) => {
-        const local = products.find(
-          (p) => p.printfulProductId === pf.id
-        );
-        return {
-          id: local?.id || String(pf.id),
-          name: pf.name,
-          type: local?.type || "",
-          subtitle: local?.subtitle || "",
-          price: pf.retail_price ? parseFloat(pf.retail_price) : local?.price,
-          description: local?.description || pf.name,
-          tags: local?.tags || [],
-          sizes: local?.sizes || [],
-          image: pf.thumbnail_url || local?.image || "",
-          imageAlt: pf.name,
-          printfulProductId: pf.id,
-          inStock: true,
-        };
-      });
-
-      return Response.json({ source: "printful", products: merged });
+      return Response.json({ source: "printify", products: merged });
     } catch (err) {
-      console.error("Printful API failed, falling back to local catalog:", err);
+      console.error("Printify API failed, using local catalog:", err.message);
     }
   }
-
-  // Fallback: local catalog
-  return Response.json({ source: "local", products });
+  return Response.json({ source: "local", products: localProducts });
 }

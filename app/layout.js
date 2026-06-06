@@ -1,5 +1,7 @@
 import { Cinzel, Raleway, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { CartProvider } from "@/lib/cart";
+import CartDrawer from "@/components/CartDrawer";
 
 const cinzel = Cinzel({
   subsets: ["latin"],
@@ -33,7 +35,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${cinzel.variable} ${raleway.variable} ${mono.variable}`}>
-      <body>{children}</body>
+      <body>
+        <CartProvider>
+          {children}
+          <CartDrawer />
+        </CartProvider>
+      </body>
     </html>
   );
 }

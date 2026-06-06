@@ -208,7 +208,7 @@ export default function HomePage() {
             </p>
             <p>
               Every design starts with a real specimen. Full-wrap sublimation on quality
-              blanks, fulfilled through Printful so you get consistent prints, reliable
+              blanks, fulfilled through Printify so you get consistent prints, reliable
               shipping, and no warehouse drama.
             </p>
             <p>
@@ -228,7 +228,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[
             { label: "Print Method", value: "Full Sublimation" },
-            { label: "Fulfillment", value: "Printful" },
+            { label: "Fulfillment", value: "Printify" },
             { label: "Ships To", value: "Worldwide" },
             { label: "Run Size", value: "Made to Order" },
           ].map((stat) => (
