@@ -3,14 +3,17 @@ import { getProduct, normalizeProduct } from "@/lib/printify";
 
 export async function GET(_, { params }) {
   const { id } = params;
+
   const local = localProducts.find((p) => p.id === id);
 
-  if (process.env.PRINTIFY_API_KEY && process.env.PRINTIFY_SHOP_ID && local?.printifyProductId) {
+  if (process.env.PRINTIFY_API_KEY && process.env.PRINTIFY_SHOP_ID) {
+    const printifyId = local?.printifyProductId || id;
     try {
-      const raw = await getProduct(local.printifyProductId);
-      return Response.json({ source: "printify", product: normalizeProduct(raw, local) });
+      const raw = await getProduct(printifyId);
+      return Response.json({ source: "printify", product: normalizeProduct(raw, local || {}) });
     } catch (err) {
       console.error("Printify product fetch failed:", err.message);
+      return Response.json({ error: "fetch failed", detail: err.message }, { status: 500 });
     }
   }
 

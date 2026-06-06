@@ -54,12 +54,21 @@ export default function ProductPage() {
     );
   }
 
-  const handleAddToCart = () => {
+    const handleAddToCart = () => {
     if (product.sizes?.length > 0 && !selectedSize) {
       alert("Please select a size.");
       return;
     }
-    addToCart(product, selectedSize);
+    const size = typeof selectedSize === "object" ? selectedSize : { label: selectedSize, variantId: null, price: product.price };
+    console.log("Adding to cart:", { productId: product.printifyProductId, variantId: size.variantId, size: size.label });
+    addToCart({
+      productId: product.printifyProductId,
+      variantId: size.variantId,
+      name: product.name,
+      size: size.label,
+      price: size.price || product.price,
+      image: product.image,
+    });
     setAddedToCart(true);
     setTimeout(() => setAddedToCart(false), 2500);
   };
