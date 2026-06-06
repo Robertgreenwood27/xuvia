@@ -43,7 +43,7 @@ export default function HomePage() {
       .then((r) => r.json())
       .then((data) => {
         const all = data.products || [];
-        setFeatured(all.filter((p) => p.tags?.includes("featured")).slice(0, 3));
+                setFeatured(all.slice(0, 3));
       });
   }, []);
 
