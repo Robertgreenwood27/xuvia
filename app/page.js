@@ -1,8 +1,10 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
-import { getFeatured } from "@/lib/products";
 
 // Web thread SVG decorations
 function WebThreads() {
@@ -34,7 +36,16 @@ function WebThreads() {
 }
 
 export default function HomePage() {
-  const featured = getFeatured();
+    const [featured, setFeatured] = useState([]);
+
+  useEffect(() => {
+    fetch("/api/products")
+      .then((r) => r.json())
+      .then((data) => {
+        const all = data.products || [];
+        setFeatured(all.filter((p) => p.tags?.includes("featured")).slice(0, 3));
+      });
+  }, []);
 
   return (
     <div className="noise" style={{ minHeight: "100vh", background: "var(--obsidian)" }}>
