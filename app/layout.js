@@ -26,14 +26,14 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://xuvia.co";
 export const metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: "XUVIA — Wearable Arachnology",
+    default: "XUVIA",
     template: "%s — XUVIA",
   },
   icons: { icon: "/logo.png" },
   description:
     "Limited run apparel for those who understand what lives in the dark. Full sublimation. No compromises.",
   openGraph: {
-    title: "XUVIA — Wearable Arachnology",
+    title: "XUVIA",
     description:
       "Limited run apparel for those who understand what lives in the dark. Full sublimation. No compromises.",
     type: "website",
@@ -42,7 +42,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "XUVIA — Wearable Arachnology",
+    title: "XUVIA",
     description:
       "Limited run apparel for those who understand what lives in the dark. Full sublimation. No compromises.",
   },
