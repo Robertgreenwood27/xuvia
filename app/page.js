@@ -186,50 +186,65 @@ export default function HomePage() {
 
       {/* ─── ABOUT / BRAND STATEMENT ─────────────────────────── */}
       <section
-        id="about"
-        className="relative py-32 px-6 overflow-hidden"
-        style={{ background: "var(--obsidian)" }}
-      >
-        {/* Decorative line */}
-        <div
-          className="absolute left-0 top-1/2 -translate-y-1/2 h-px w-full opacity-5"
-          style={{ background: "var(--ember)" }}
-        />
+  id="about"
+  className="relative py-32 px-6 overflow-hidden"
+  style={{ background: "var(--obsidian)" }}
+>
+  {/* Decorative line */}
+  <div
+    className="absolute left-0 top-1/2 -translate-y-1/2 h-px w-full opacity-5"
+    style={{ background: "var(--ember)" }}
+  />
 
-        <div className="max-w-3xl mx-auto relative z-10">
-          <p
-            className="font-mono text-xs mb-8"
-            style={{ color: "var(--ember)", letterSpacing: "0.35em" }}
-          >
-            ABOUT XUVIA
-          </p>
+  <div className="max-w-3xl mx-auto relative z-10">
+    <p
+      className="font-mono text-xs mb-8"
+      style={{ color: "var(--ember)", letterSpacing: "0.35em" }}
+    >
+      ABOUT XUVIA
+    </p>
 
-          <h2
-            className="font-display text-3xl md:text-5xl mb-10 leading-tight"
-            style={{ color: "var(--silk)", letterSpacing: "0.1em" }}
-          >
-            Not everyone sees beauty in eight legs.
-          </h2>
+    <h2
+      className="font-display text-3xl md:text-5xl mb-10 leading-tight"
+      style={{ color: "var(--silk)", letterSpacing: "0.1em" }}
+    >
+      Not everyone gets it.
+    </h2>
 
-          <div className="space-y-6" style={{ color: "var(--muted)", fontWeight: 300, lineHeight: "1.85" }}>
-            <p>
-              XUVIA was built for the keepers. The ones with enclosures instead of
-              shelves. The ones who know the difference between a <em>Poecilotheria</em>{" "}
-              and a <em>Pterinochilus</em> — and have opinions about it.
-            </p>
-            <p>
-              Every design starts with a real specimen. Full-wrap sublimation on quality
-              blanks, fulfilled through Printify so you get consistent prints, reliable
-              shipping, and no warehouse drama.
-            </p>
-            <p>
-              Small catalog. Intentional additions. Never mass-market.
-            </p>
-          </div>
+    <div
+      className="space-y-6"
+      style={{ color: "var(--muted)", fontWeight: 300, lineHeight: "1.85" }}
+    >
+      <p>
+        Most people see eight legs and freak out. We see something else.
+      </p>
 
-          <hr className="divider-ember mt-12 mb-0" />
-        </div>
-      </section>
+      <p>
+        XUVIA is for the actual keepers. The ones who’ve turned spare bedrooms
+        into rooms full of glass boxes. The collectors who can spot a{" "}
+        <em>Regalis</em> from a <em>Rufilata</em> from across the room and
+        probably argue about substrate depth at 2 a.m. You know who you are.
+      </p>
+
+      <p>
+        Every design starts with the animal first — the way it moves, the way it
+        sits, the insane patterns and that weird, alien elegance that hooks you
+        harder than it should. No generic spider crap. No mass-market Halloween
+        nonsense. Just pieces built for people who are in it.
+      </p>
+
+      <p>
+        We keep the catalog small on purpose. Everything’s made to order, done
+        right, and dropped when it actually feels worth it. If you’re still
+        looking for cheap tarantula merch at the mall, this ain’t for you. If
+        you’ve got more enclosures than bookshelves and you’re fine with that...
+        welcome home.
+      </p>
+    </div>
+
+    <hr className="divider-ember mt-12 mb-0" />
+  </div>
+</section>
 
       {/* ─── PROCESS / SPECS STRIP ───────────────────────────── */}
       <section
