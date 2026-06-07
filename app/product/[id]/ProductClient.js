@@ -160,7 +160,6 @@ export default function ProductPage() {
               <span className="font-display text-3xl" style={{ color: "var(--ember)", letterSpacing: "0.1em" }}>
                 ${typeof product.price === "number" ? product.price.toFixed(2) : product.price}
               </span>
-              <span className="font-mono text-xs" style={{ color: "var(--muted)" }}>USD · Free shipping on orders $75+</span>
             </div>
 
             <p className="text-sm leading-relaxed mb-10" style={{ color: "var(--muted)", fontWeight: 300, maxWidth: "420px" }}>
@@ -225,7 +224,6 @@ export default function ProductPage() {
                 ["Print", "All-over full sublimation"],
                 ["Material", "100% polyester"],
                 ["Care", "Machine wash cold, tumble dry low"],
-                ["Ships", "Worldwide via Printify"],
               ].map(([label, value]) => (
                 <div key={label} className="flex gap-6">
                   <span className="font-mono text-xs w-16 shrink-0" style={{ color: "var(--muted)", letterSpacing: "0.15em" }}>{label}</span>
