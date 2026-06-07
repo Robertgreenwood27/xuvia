@@ -52,48 +52,64 @@ export default function HomePage() {
       <Nav />
 
       {/* ─── HERO ──────────────────────────────────────────── */}
-      <section
-        className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
-        style={{
-          background:
-            "radial-gradient(ellipse 80% 60% at 50% 40%, rgba(139,0,0,0.07) 0%, transparent 70%)",
-        }}
-      >
-        <WebThreads />
+<section
+  className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
+  style={{
+    background:
+      "radial-gradient(ellipse 80% 60% at 50% 40%, rgba(139,0,0,0.07) 0%, transparent 70%)",
+  }}
+>
+  <WebThreads />
 
-        {/* Ambient ember glow top */}
-        <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-px"
-          style={{
-            height: "200px",
-            background:
-              "linear-gradient(to bottom, rgba(200,169,110,0.3), transparent)",
-          }}
-        />
+  {/* Ambient ember glow top */}
+  <div
+    className="absolute top-0 left-1/2 -translate-x-1/2 w-px"
+    style={{
+      height: "200px",
+      background:
+        "linear-gradient(to bottom, rgba(200,169,110,0.3), transparent)",
+    }}
+  />
 
-        <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
+  <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
+    {/* Logo */}
+    <img
+  src="/logo.png"
+  alt="XUVIA logo"
+  className="mx-auto mb-6 animate-fade-up"
+  style={{
+    width: "clamp(120px, 13vw, 190px)",
+    height: "auto",
+    opacity: 0.94,
+    filter: "drop-shadow(0 0 24px rgba(200, 169, 110, 0.18))",
+  }}
+/>
 
-          {/* Main heading */}
-          <h1
-            className="font-display animate-fade-up delay-200 ember-glow"
-            style={{
-              fontSize: "clamp(4rem, 14vw, 12rem)",
-              lineHeight: "0.9",
-              color: "var(--silk)",
-              letterSpacing: "0.15em",
-            }}
-          >
-            XUVIA
-          </h1>
+    {/* Main heading */}
+    <h1
+      className="font-display animate-fade-up delay-200 ember-glow"
+      style={{
+        fontSize: "clamp(4rem, 14vw, 12rem)",
+        lineHeight: "0.9",
+        color: "var(--silk)",
+        letterSpacing: "0.15em",
+      }}
+    >
+      XUVIA
+    </h1>
 
-          <hr className="divider-ember my-10 mx-auto animate-fade-up delay-300" style={{ maxWidth: "200px" }} />
+    <hr
+      className="divider-ember my-10 mx-auto animate-fade-up delay-300"
+      style={{ maxWidth: "200px" }}
+    />
 
-          {/* Sub */}
-          <p
-            className="font-body text-base md:text-lg animate-fade-up delay-400 max-w-lg mx-auto leading-relaxed"
-            style={{ color: "var(--muted)", fontWeight: 300 }}>
-            For Keepers
-          </p>
+    {/* Sub */}
+    <p
+      className="font-body text-base md:text-lg animate-fade-up delay-400 max-w-lg mx-auto leading-relaxed"
+      style={{ color: "var(--muted)", fontWeight: 300 }}
+    >
+      For Keepers
+    </p>
 
           {/* CTA buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12 animate-fade-up delay-500">
