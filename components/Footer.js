@@ -101,12 +101,6 @@ export default function Footer() {
         <p className="font-mono text-xs" style={{ color: "var(--muted)" }}>
           © {year} XUVIA. All rights reserved.
         </p>
-        <p
-          className="font-mono text-xs"
-          style={{ color: "var(--border-bright)" }}
-        >
-          Built for the keepers.
-        </p>
       </div>
     </footer>
   );

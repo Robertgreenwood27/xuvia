@@ -199,7 +199,7 @@ export default function HomePage() {
       className="font-display text-3xl md:text-5xl mb-10 leading-tight"
       style={{ color: "var(--silk)", letterSpacing: "0.1em" }}
     >
-      I made these because I couldn&apos;t find what I wanted 
+      I made these because I couldn&apos;t find what I was looking for.
     </h2>
 
     <div
@@ -207,38 +207,50 @@ export default function HomePage() {
       style={{ color: "var(--muted)", fontWeight: 300, lineHeight: "1.85" }}
     >
       <p>
-        Most tarantula shirts felt like they were made by people who liked the
-        idea of spiders, not the animals themselves. Stock photos. Halloween
-        graphics. Cheap slogans. Nothing I actually wanted in my closet.
+        Most tarantula shirts felt like they were designed by people who loved
+        the idea of spiders, not the animals themselves. Stock photos.
+        Halloween graphics. Cheesy slogans. And worst of all, tarantulas
+        perched on orb webs like they&apos;re common garden spiders.
+      </p>
+
+      <p>So I started making my own.</p>
+
+      <p>XUVIA is built for the keepers.</p>
+
+      <p>
+        I know that feeling — the quiet buzz you get just watching your
+        critters. That moment when you&apos;re trying to catch them in exactly
+        the right light, even though it never quite happens. Twenty years in,
+        my heart still pounds when I feed them.
+      </p>
+
+      <p>I wanted to celebrate that feeling.</p>
+
+      <p>
+        I love the funny cartoon spooder shirts as much as anyone, but I wanted
+        the real deal. The fine details. The posture. The color. The patterns.
+        The breathtaking little things that show how stunning these creatures
+        actually are.
       </p>
 
       <p>
-        So I started making my own.
+        I wanted to carry that buzz with me and share it with others.
       </p>
 
       <p>
-        XUVIA is built for the keepers. The ones with enclosures instead of
-        bookshelves. The ones who can spot a <em>Regalis</em> from a{" "}
-        <em>Rufilata</em> from across the room and probably have opinions about
-        substrate depth at 2 a.m.
+        I&apos;ll keep expanding the collections and putting more of our
+        favorites on stage. More species. More styles. Different clothing types.
+        Maybe even pieces beyond clothing down the line.
       </p>
 
       <p>
-        Every piece starts with the species first — the posture, the colors, the
-        patterns, and that strange alien elegance that makes these animals hard
-        to forget once they get under your skin.
+        The promise is simple: respect for the animals, devotion to the
+        details, and work that comes straight from the heart.
       </p>
 
-      <p>
-        The catalog stays small on purpose. New pieces drop when they feel worth
-        making, not because a schedule says they should. Everything is made to
-        order and built around the animals that started the obsession.
-      </p>
+      <p>That&apos;s what XUVIA is.</p>
 
-      <p>
-        If you&apos;ve ever looked for apparel that actually reflects the hobby
-        and came up empty-handed, welcome home.
-      </p>
+      <p>And it always will be.</p>
     </div>
 
     <hr className="divider-ember mt-12 mb-0" />
