@@ -1,10 +1,22 @@
-import { products } from "@/lib/products";
+import { products as localProducts } from "@/lib/products";
+import { getProducts } from "@/lib/printify";
 
-export default function sitemap() {
+export default async function sitemap() {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://xuvia.co";
 
-  const productPages = products.map((product) => ({
-    url: `${baseUrl}/product/${product.id}`,
+  let productIds = localProducts.map((p) => p.id);
+
+  if (process.env.PRINTIFY_API_KEY && process.env.PRINTIFY_SHOP_ID) {
+    try {
+      const raw = await getProducts();
+      if (raw.length > 0) productIds = raw.map((p) => p.id);
+    } catch (err) {
+      console.error("Sitemap: Printify fetch failed, using local products", err.message);
+    }
+  }
+
+  const productPages = productIds.map((id) => ({
+    url: `${baseUrl}/product/${id}`,
     lastModified: new Date(),
     changeFrequency: "weekly",
     priority: 0.8,
