@@ -29,6 +29,7 @@ export const metadata = {
     default: "XUVIA — Wearable Arachnology",
     template: "%s — XUVIA",
   },
+  icons: { icon: "/logo.png" },
   description:
     "Limited run apparel for those who understand what lives in the dark. Full sublimation. No compromises.",
   openGraph: {
