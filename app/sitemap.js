@@ -9,7 +9,8 @@ export default async function sitemap() {
   if (process.env.PRINTIFY_API_KEY && process.env.PRINTIFY_SHOP_ID) {
     try {
       const raw = await getProducts();
-      if (raw.length > 0) productIds = raw.map((p) => p.id);
+      const published = raw.filter((p) => p.external?.id);
+      if (published.length > 0) productIds = published.map((p) => p.id);
     } catch (err) {
       console.error("Sitemap: Printify fetch failed, using local products", err.message);
     }
