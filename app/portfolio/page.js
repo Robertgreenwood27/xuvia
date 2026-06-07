@@ -26,10 +26,10 @@ export default function PortfolioPage() {
             XUVIA / PORTFOLIO
           </p>
           <h1 className="font-display" style={{ fontSize: "clamp(2rem, 5vw, 4rem)", color: "var(--silk)", lineHeight: 1.1 }}>
-            Design Work
+            Poster Collection
           </h1>
-          <p style={{ marginTop: "1rem", color: "var(--muted)", fontSize: "0.875rem", fontWeight: 300, maxWidth: "480px", lineHeight: 1.75 }}>
-            Original species-driven artwork. All designs built around the animals — not the aesthetic.
+          <p style={{ marginTop: "1.25rem", color: "var(--muted)", fontSize: "0.875rem", fontWeight: 300, maxWidth: "600px", lineHeight: 1.85 }}>
+            XUVIA poster collection is a dark exotic pet series focused on species-specific exotic pet art, and high-contrast metal-print-ready compositions. The collection is built around real species and designed as a cohesive wall-art series for keepers, collectors, and darker interior spaces.
           </p>
         </div>
       </header>
@@ -49,7 +49,7 @@ export default function PortfolioPage() {
               onClick={() => setActive(item)}
               style={{
                 position: "relative",
-                aspectRatio: "1 / 1",
+                aspectRatio: "5 / 7",
                 background: "var(--ash)",
                 border: "none",
                 cursor: "pointer",
@@ -108,7 +108,7 @@ export default function PortfolioPage() {
             onClick={(e) => e.stopPropagation()}
             style={{ position: "relative", width: "100%", maxWidth: "860px", cursor: "default" }}
           >
-            <div style={{ position: "relative", width: "100%", aspectRatio: "1 / 1" }}>
+            <div style={{ position: "relative", width: "100%", aspectRatio: "5 / 7" }}>
               <Image
                 src={active.image}
                 alt={active.title}
