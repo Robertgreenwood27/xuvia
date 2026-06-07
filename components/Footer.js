@@ -16,15 +16,20 @@ export default function Footer() {
         style={{ borderBottom: "1px solid var(--border)" }}
       >
         <div className="marquee-inner">
-          {Array(8).fill(null).map((_, i) => (
-            <span
-              key={i}
-              className="font-display text-xs px-8"
-              style={{ color: "var(--border-bright)", letterSpacing: "0.3em" }}
-            >
-              XUVIA · WEARABLE ARACHNOLOGY · FULL SUBLIMATION · LIMITED RUN ·
-            </span>
-          ))}
+          {Array(8)
+            .fill(null)
+            .map((_, i) => (
+              <span
+                key={i}
+                className="font-display text-xs px-8"
+                style={{
+                  color: "var(--border-bright)",
+                  letterSpacing: "0.3em",
+                }}
+              >
+                XUVIA · FOR THE KEEPERS · SMALL RELEASES · MADE TO ORDER ·
+              </span>
+            ))}
         </div>
       </div>
 
@@ -39,10 +44,10 @@ export default function Footer() {
           </p>
           <p
             className="text-sm leading-relaxed"
-            style={{ color: "var(--muted)", maxWidth: "240px" }}
+            style={{ color: "var(--muted)", maxWidth: "260px" }}
           >
-            Apparel for those who understand what lives in the dark.
-            Full-wrap sublimation. Small batches. No compromises.
+            Made for the keepers who wanted something better than generic
+            animal merch.
           </p>
         </div>
 
@@ -58,8 +63,6 @@ export default function Footer() {
             {[
               { label: "Shop All", href: "/shop" },
               { label: "About Xuvia", href: "#about" },
-              { label: "Sizing Guide", href: "#sizing" },
-              { label: "Contact", href: "#contact" },
             ].map((l) => (
               <li key={l.label}>
                 <Link
@@ -83,9 +86,9 @@ export default function Footer() {
             Info
           </p>
           <ul className="space-y-3 text-sm" style={{ color: "var(--muted)" }}>
-            <li>Fulfilled by Printify</li>
-            <li>Ships worldwide</li>
-            <li>Print-on-demand</li>
+            <li>Made to order</li>
+            <li>Small releases</li>
+            <li>Catalog kept intentionally limited</li>
             <li>Returns handled case by case</li>
           </ul>
         </div>
@@ -98,8 +101,11 @@ export default function Footer() {
         <p className="font-mono text-xs" style={{ color: "var(--muted)" }}>
           © {year} XUVIA. All rights reserved.
         </p>
-        <p className="font-mono text-xs" style={{ color: "var(--border-bright)" }}>
-          Built for the patient ones.
+        <p
+          className="font-mono text-xs"
+          style={{ color: "var(--border-bright)" }}
+        >
+          Built for the keepers.
         </p>
       </div>
     </footer>

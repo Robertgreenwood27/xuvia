@@ -26,7 +26,7 @@ export default function ShopPage() {
         <div className="max-w-7xl mx-auto">
           <p className="font-mono text-xs mb-4" style={{ color: "var(--ember)", letterSpacing: "0.35em" }}>XUVIA / SHOP</p>
           <h1 className="font-display" style={{ fontSize: "clamp(2.5rem, 6vw, 5rem)", color: "var(--silk)", letterSpacing: "0.1em" }}>The Collection</h1>
-          <p className="mt-4 text-sm" style={{ color: "var(--muted)", maxWidth: "400px", lineHeight: "1.75" }}>Every piece is made to order. Full sublimation. Ships via Printify.</p>
+          <p className="mt-4 text-sm" style={{ color: "var(--muted)", maxWidth: "400px", lineHeight: "1.75" }}>Every piece is made to order.</p>
         </div>
       </div>
       <main className="max-w-7xl mx-auto px-6 py-20">

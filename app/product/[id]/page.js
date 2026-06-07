@@ -215,7 +215,7 @@ export default function ProductPage() {
             </button>
 
             <p className="font-mono text-xs text-center" style={{ color: "var(--muted)", letterSpacing: "0.15em" }}>
-              Fulfilled & shipped by Printify · 2–7 business days
+              Usually arrives in 2–7 business days
             </p>
 
             <hr className="divider-ember mt-10 mb-8" />

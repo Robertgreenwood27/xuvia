@@ -72,13 +72,6 @@ export default function HomePage() {
         />
 
         <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
-          {/* Eyebrow */}
-          <p
-            className="font-mono text-xs mb-8 animate-fade-up"
-            style={{ color: "var(--ember)", letterSpacing: "0.4em" }}
-          >
-            WEARABLE ARACHNOLOGY
-          </p>
 
           {/* Main heading */}
           <h1
@@ -98,10 +91,8 @@ export default function HomePage() {
           {/* Sub */}
           <p
             className="font-body text-base md:text-lg animate-fade-up delay-400 max-w-lg mx-auto leading-relaxed"
-            style={{ color: "var(--muted)", fontWeight: 300 }}
-          >
-            Full-wrap sublimation apparel. Small batches. For those who understand
-            what lives in the dark.
+            style={{ color: "var(--muted)", fontWeight: 300 }}>
+            For Keepers
           </p>
 
           {/* CTA buttons */}
@@ -113,7 +104,7 @@ export default function HomePage() {
               </svg>
             </Link>
             <Link href="#about" className="btn-ghost">
-              Our Story
+              My Story
             </Link>
           </div>
         </div>
@@ -208,7 +199,7 @@ export default function HomePage() {
       className="font-display text-3xl md:text-5xl mb-10 leading-tight"
       style={{ color: "var(--silk)", letterSpacing: "0.1em" }}
     >
-      Not everyone gets it.
+      I made these because I couldn&apos;t find what I wanted 
     </h2>
 
     <div
@@ -216,29 +207,37 @@ export default function HomePage() {
       style={{ color: "var(--muted)", fontWeight: 300, lineHeight: "1.85" }}
     >
       <p>
-        Most people see eight legs and freak out. We see something else.
+        Most tarantula shirts felt like they were made by people who liked the
+        idea of spiders, not the animals themselves. Stock photos. Halloween
+        graphics. Cheap slogans. Nothing I actually wanted in my closet.
       </p>
 
       <p>
-        XUVIA is for the actual keepers. The ones who’ve turned spare bedrooms
-        into rooms full of glass boxes. The collectors who can spot a{" "}
-        <em>Regalis</em> from a <em>Rufilata</em> from across the room and
-        probably argue about substrate depth at 2 a.m. You know who you are.
+        So I started making my own.
       </p>
 
       <p>
-        Every design starts with the animal first — the way it moves, the way it
-        sits, the insane patterns and that weird, alien elegance that hooks you
-        harder than it should. No generic spider crap. No mass-market Halloween
-        nonsense. Just pieces built for people who are in it.
+        XUVIA is built for the keepers. The ones with enclosures instead of
+        bookshelves. The ones who can spot a <em>Regalis</em> from a{" "}
+        <em>Rufilata</em> from across the room and probably have opinions about
+        substrate depth at 2 a.m.
       </p>
 
       <p>
-        We keep the catalog small on purpose. Everything’s made to order, done
-        right, and dropped when it actually feels worth it. If you’re still
-        looking for cheap tarantula merch at the mall, this ain’t for you. If
-        you’ve got more enclosures than bookshelves and you’re fine with that...
-        welcome home.
+        Every piece starts with the species first — the posture, the colors, the
+        patterns, and that strange alien elegance that makes these animals hard
+        to forget once they get under your skin.
+      </p>
+
+      <p>
+        The catalog stays small on purpose. New pieces drop when they feel worth
+        making, not because a schedule says they should. Everything is made to
+        order and built around the animals that started the obsession.
+      </p>
+
+      <p>
+        If you&apos;ve ever looked for apparel that actually reflects the hobby
+        and came up empty-handed, welcome home.
       </p>
     </div>
 
@@ -246,37 +245,8 @@ export default function HomePage() {
   </div>
 </section>
 
-      {/* ─── PROCESS / SPECS STRIP ───────────────────────────── */}
-      <section
-        style={{ background: "var(--ash)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}
-        className="py-16 px-6"
-      >
-        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          {[
-            { label: "Print Method", value: "Full Sublimation" },
-            { label: "Fulfillment", value: "Printify" },
-            { label: "Ships To", value: "Worldwide" },
-            { label: "Run Size", value: "Made to Order" },
-          ].map((stat) => (
-            <div key={stat.label}>
-              <p
-                className="font-mono text-xs mb-2"
-                style={{ color: "var(--muted)", letterSpacing: "0.2em" }}
-              >
-                {stat.label}
-              </p>
-              <p
-                className="font-display text-sm"
-                style={{ color: "var(--ember)", letterSpacing: "0.15em" }}
-              >
-                {stat.value}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ─── CONTACT ─────────────────────────────────────────── */}
+     
+      {/* ─── CONTACT ─────────────────────────────────────────── 
       <section id="contact" className="py-32 px-6" style={{ background: "var(--void)" }}>
         <div className="max-w-xl mx-auto text-center">
           <p
@@ -302,7 +272,7 @@ export default function HomePage() {
           </a>
         </div>
       </section>
-
+*/}
       <Footer />
     </div>
   );
