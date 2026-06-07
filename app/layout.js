@@ -21,7 +21,7 @@ const mono = JetBrains_Mono({
   weight: ["400", "500"],
 });
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://xuvia.com";
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://xuvia.co";
 
 export const metadata = {
   metadataBase: new URL(baseUrl),

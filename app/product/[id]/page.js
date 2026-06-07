@@ -1,7 +1,7 @@
 import { getProduct } from "@/lib/products";
 import ProductClient from "./ProductClient";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://xuvia.com";
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://xuvia.co";
 
 export async function generateMetadata({ params }) {
   const product = getProduct(params.id);
