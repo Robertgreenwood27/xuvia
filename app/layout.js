@@ -31,11 +31,11 @@ export const metadata = {
   },
   icons: { icon: "/logo.png" },
   description:
-    "Limited run apparel for those who understand what lives in the dark. Full sublimation. No compromises.",
+    "Keeper-made apparel and goods inspired by exotic pets, real species, fine details, and the strange beauty of the animals themselves.",
   openGraph: {
     title: "XUVIA",
     description:
-      "Limited run apparel for those who understand what lives in the dark. Full sublimation. No compromises.",
+      "Keeper-made apparel and goods inspired by exotic pets, real species, fine details, and the strange beauty of the animals themselves.",
     type: "website",
     url: baseUrl,
     siteName: "XUVIA",
@@ -44,7 +44,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "XUVIA",
     description:
-      "Limited run apparel for those who understand what lives in the dark. Full sublimation. No compromises.",
+      "Keeper-made apparel and goods inspired by exotic pets, real species, fine details, and the strange beauty of the animals themselves.",
   },
 };
 
@@ -53,7 +53,8 @@ const orgJsonLd = {
   "@type": "Organization",
   name: "XUVIA",
   url: baseUrl,
-  description: "Limited run sublimation apparel for arachnid enthusiasts.",
+  description:
+    "Keeper-made apparel and goods inspired by exotic pets, real species, detailed patterns, posture, color, and the animals that started the obsession.",
 };
 
 export default function RootLayout({ children }) {
