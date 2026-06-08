@@ -1,13 +1,38 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
+import { products as localProducts } from "@/lib/products";
+import { getProducts, normalizeProduct } from "@/lib/printify";
+
+async function fetchProducts() {
+  if (process.env.PRINTIFY_API_KEY && process.env.PRINTIFY_SHOP_ID) {
+    try {
+      const raw = await getProducts();
+      return raw
+        .filter((p) => p.external?.id)
+        .map((p) => {
+          const local = localProducts.find((lp) => lp.printifyProductId === p.id);
+          return normalizeProduct(p, local || {});
+        })
+        .sort(sortProducts);
+    } catch (err) {
+      console.error("Printify fetch failed, using local catalog:", err.message);
+    }
+  }
+  return localProducts;
+}
+
+function sortProducts(a, b) {
+  const colA = a.collection ?? Infinity;
+  const colB = b.collection ?? Infinity;
+  if (colA !== colB) return colA - colB;
+  if (a.productType !== b.productType) return a.productType.localeCompare(b.productType);
+  return a.name.localeCompare(b.name);
+}
 
 function groupBy(arr, key) {
   return arr.reduce((acc, item) => {
-    const k = item[key] || "other";
+    const k = item[key] ?? "other";
     if (!acc[k]) acc[k] = [];
     acc[k].push(item);
     return acc;
@@ -18,8 +43,8 @@ function CollectionGroups({ products }) {
   const byCollection = groupBy(products, "collection");
 
   const collectionKeys = Object.keys(byCollection).sort((a, b) => {
-    if (a === "null" || a === "undefined") return 1;
-    if (b === "null" || b === "undefined") return -1;
+    if (a === "null" || a === "undefined" || a === "other") return 1;
+    if (b === "null" || b === "undefined" || b === "other") return -1;
     return Number(a) - Number(b);
   });
 
@@ -33,7 +58,9 @@ function CollectionGroups({ products }) {
           <section key={colKey}>
             <div className="flex items-center gap-4 mb-12">
               <p className="font-mono text-xs" style={{ color: "var(--ember)", letterSpacing: "0.3em" }}>
-                {colKey === "null" || colKey === "undefined" ? "UNCATEGORIZED" : `COLLECTION ${colKey}`}
+                {colKey === "null" || colKey === "undefined" || colKey === "other"
+                  ? "UNCATEGORIZED"
+                  : `COLLECTION ${colKey}`}
               </p>
               <div className="flex-1 h-px" style={{ background: "var(--border)" }} />
             </div>
@@ -59,18 +86,8 @@ function CollectionGroups({ products }) {
   );
 }
 
-export default function ShopPage() {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch("/api/products")
-      .then((r) => r.json())
-      .then((data) => {
-        setProducts(data.products || []);
-        setLoading(false);
-      });
-  }, []);
+export default async function ShopPage() {
+  const products = await fetchProducts();
 
   return (
     <div className="noise" style={{ background: "var(--obsidian)", minHeight: "100vh" }}>
@@ -86,16 +103,10 @@ export default function ShopPage() {
       <main className="max-w-7xl mx-auto px-6 py-20">
         <div className="flex items-center justify-between mb-12">
           <p className="font-mono text-xs" style={{ color: "var(--muted)", letterSpacing: "0.2em" }}>
-            {loading ? "Loading..." : `${products.length} ${products.length === 1 ? "piece" : "pieces"}`}
+            {products.length} {products.length === 1 ? "piece" : "pieces"}
           </p>
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-xs" style={{ color: "var(--muted)", letterSpacing: "0.15em" }}>Sort:</span>
-            <span className="font-mono text-xs" style={{ color: "var(--ember)", letterSpacing: "0.15em" }}>Featured</span>
-          </div>
         </div>
-        {loading ? (
-          <div className="py-40 text-center"><p className="font-mono text-xs" style={{ color: "var(--muted)", letterSpacing: "0.3em" }}>Loading collection...</p></div>
-        ) : products.length > 0 ? (
+        {products.length > 0 ? (
           <CollectionGroups products={products} />
         ) : (
           <div className="py-40 text-center">
