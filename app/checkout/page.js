@@ -24,6 +24,42 @@ const COUNTRIES = [
   { code: "DK", name: "Denmark" },
 ];
 
+const US_STATES = [
+  ["AL","Alabama"],["AK","Alaska"],["AZ","Arizona"],["AR","Arkansas"],["CA","California"],
+  ["CO","Colorado"],["CT","Connecticut"],["DE","Delaware"],["FL","Florida"],["GA","Georgia"],
+  ["HI","Hawaii"],["ID","Idaho"],["IL","Illinois"],["IN","Indiana"],["IA","Iowa"],
+  ["KS","Kansas"],["KY","Kentucky"],["LA","Louisiana"],["ME","Maine"],["MD","Maryland"],
+  ["MA","Massachusetts"],["MI","Michigan"],["MN","Minnesota"],["MS","Mississippi"],["MO","Missouri"],
+  ["MT","Montana"],["NE","Nebraska"],["NV","Nevada"],["NH","New Hampshire"],["NJ","New Jersey"],
+  ["NM","New Mexico"],["NY","New York"],["NC","North Carolina"],["ND","North Dakota"],["OH","Ohio"],
+  ["OK","Oklahoma"],["OR","Oregon"],["PA","Pennsylvania"],["RI","Rhode Island"],["SC","South Carolina"],
+  ["SD","South Dakota"],["TN","Tennessee"],["TX","Texas"],["UT","Utah"],["VT","Vermont"],
+  ["VA","Virginia"],["WA","Washington"],["WV","West Virginia"],["WI","Wisconsin"],["WY","Wyoming"],
+  ["DC","Washington D.C."],
+];
+
+const CA_PROVINCES = [
+  ["AB","Alberta"],["BC","British Columbia"],["MB","Manitoba"],["NB","New Brunswick"],
+  ["NL","Newfoundland"],["NS","Nova Scotia"],["ON","Ontario"],["PE","Prince Edward Island"],
+  ["QC","Quebec"],["SK","Saskatchewan"],
+];
+
+function formatPhone(value) {
+  const digits = value.replace(/\D/g, "").slice(0, 10);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 6) return `(${digits.slice(0,3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
+}
+
+function formatZip(value, country) {
+  if (country === "US") return value.replace(/\D/g, "").slice(0, 5);
+  if (country === "CA") {
+    const clean = value.replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 6);
+    return clean.length > 3 ? `${clean.slice(0,3)} ${clean.slice(3)}` : clean;
+  }
+  return value.slice(0, 10);
+}
+
 const inputStyle = {
   background: "var(--ash)",
   border: "1px solid var(--border)",
@@ -77,7 +113,16 @@ function CheckoutForm({ items, subtotal, intentId }) {
   const [shippingLoading, setShippingLoading] = useState(false);
   const [shippingError, setShippingError] = useState("");
 
-  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+  const addressFields = ["firstName","lastName","address1","address2","city","state","zip","country"];
+
+  const set = (k) => (e) => {
+    let value = e.target.value;
+    if (k === "phone") value = formatPhone(value);
+    if (k === "zip") value = formatZip(value, form.country);
+    if (k === "country") { setForm((f) => ({ ...f, country: value, state: "", zip: "" })); setShipping(null); return; }
+    if (addressFields.includes(k)) setShipping(null);
+    setForm((f) => ({ ...f, [k]: value }));
+  };
 
   const addressComplete = form.firstName && form.lastName && form.email && form.phone &&
     form.address1 && form.city && form.state && form.zip && form.country;
@@ -178,7 +223,7 @@ function CheckoutForm({ items, subtotal, intentId }) {
             </div>
             <div className="mt-4">
               <label style={labelStyle}>PHONE</label>
-              <input required type="tel" value={form.phone} onChange={set("phone")} style={inputStyle} />
+              <input required type="tel" value={form.phone} onChange={set("phone")} placeholder="(555) 555-5555" style={inputStyle} />
             </div>
           </div>
 
@@ -211,11 +256,35 @@ function CheckoutForm({ items, subtotal, intentId }) {
                 </div>
                 <div>
                   <label style={labelStyle}>STATE / REGION</label>
-                  <input required value={form.state} onChange={set("state")} style={inputStyle} />
+                  {form.country === "US" ? (
+                    <select required value={form.state} onChange={set("state")} style={{ ...inputStyle, cursor: "pointer" }}>
+                      <option value="">Select...</option>
+                      {US_STATES.map(([code, name]) => (
+                        <option key={code} value={code}>{name}</option>
+                      ))}
+                    </select>
+                  ) : form.country === "CA" ? (
+                    <select required value={form.state} onChange={set("state")} style={{ ...inputStyle, cursor: "pointer" }}>
+                      <option value="">Select...</option>
+                      {CA_PROVINCES.map(([code, name]) => (
+                        <option key={code} value={code}>{name}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input required value={form.state} onChange={set("state")} style={inputStyle} />
+                  )}
                 </div>
                 <div>
-                  <label style={labelStyle}>ZIP / POSTAL</label>
-                  <input required value={form.zip} onChange={set("zip")} style={inputStyle} />
+                  <label style={labelStyle}>
+                    {form.country === "US" ? "ZIP CODE" : "POSTAL CODE"}
+                  </label>
+                  <input
+                    required
+                    value={form.zip}
+                    onChange={set("zip")}
+                    placeholder={form.country === "US" ? "12345" : form.country === "CA" ? "A1A 1A1" : ""}
+                    style={inputStyle}
+                  />
                 </div>
               </div>
             </div>
