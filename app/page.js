@@ -1,10 +1,9 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
+import { products as localProducts } from "@/lib/products";
+import { getProducts, normalizeProduct } from "@/lib/printify";
 
 // Web thread SVG decorations
 function WebThreads() {
@@ -35,17 +34,26 @@ function WebThreads() {
   );
 }
 
-export default function HomePage() {
-    const [featured, setFeatured] = useState([]);
+async function fetchFeatured() {
+  if (process.env.PRINTIFY_API_KEY && process.env.PRINTIFY_SHOP_ID) {
+    try {
+      const raw = await getProducts();
+      const all = raw
+        .filter((p) => p.external?.id)
+        .map((p) => {
+          const local = localProducts.find((lp) => lp.printifyProductId === p.id);
+          return normalizeProduct(p, local || {});
+        });
+      return all.slice(0, 3);
+    } catch (err) {
+      console.error("Homepage: Printify fetch failed", err.message);
+    }
+  }
+  return localProducts.slice(0, 3);
+}
 
-  useEffect(() => {
-    fetch("/api/products")
-      .then((r) => r.json())
-      .then((data) => {
-        const all = data.products || [];
-                setFeatured(all.slice(0, 3));
-      });
-  }, []);
+export default async function HomePage() {
+  const featured = await fetchFeatured();
 
   return (
     <div className="noise" style={{ minHeight: "100vh", background: "var(--obsidian)" }}>
@@ -172,15 +180,9 @@ export default function HomePage() {
 
           {/* Product grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featured.length > 0 ? (
-              featured.map((product, i) => (
-                <ProductCard key={product.id} product={product} priority={i === 0} />
-              ))
-            ) : (
-              <p className="col-span-3 text-center py-20" style={{ color: "var(--muted)" }}>
-                Products coming soon.
-              </p>
-            )}
+            {featured.map((product, i) => (
+              <ProductCard key={product.id} product={product} priority={i === 0} />
+            ))}
           </div>
 
           <div className="mt-10 md:hidden text-center">

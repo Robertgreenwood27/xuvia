@@ -1,53 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { useCart } from "@/lib/cart";
 
-export default function ProductPage() {
-  const { id } = useParams();
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
+export default function ProductPage({ product }) {
   const [selectedSize, setSelectedSize] = useState(null);
   const [addedToCart, setAddedToCart] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
   const { addToCart } = useCart();
 
-  useEffect(() => {
-    fetch(`/api/products/${id}`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.error) { setNotFound(true); return; }
-        setProduct(data.product);
-        setLoading(false);
-      })
-      .catch(() => setNotFound(true));
-  }, [id]);
-
-  if (notFound) {
+  if (!product) {
     return (
       <div className="noise" style={{ background: "var(--obsidian)", minHeight: "100vh" }}>
         <Nav />
         <div className="flex flex-col items-center justify-center" style={{ minHeight: "60vh" }}>
           <p className="font-display text-2xl mb-4" style={{ color: "var(--muted)", letterSpacing: "0.2em" }}>Product not found</p>
           <Link href="/shop" className="btn-ghost">Back to Shop</Link>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-
-  if (loading) {
-    return (
-      <div className="noise" style={{ background: "var(--obsidian)", minHeight: "100vh" }}>
-        <Nav />
-        <div className="flex items-center justify-center" style={{ minHeight: "60vh" }}>
-          <p className="font-mono text-xs" style={{ color: "var(--muted)", letterSpacing: "0.3em" }}>Loading...</p>
         </div>
         <Footer />
       </div>
