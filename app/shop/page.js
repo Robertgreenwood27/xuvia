@@ -5,6 +5,60 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 
+function groupBy(arr, key) {
+  return arr.reduce((acc, item) => {
+    const k = item[key] || "other";
+    if (!acc[k]) acc[k] = [];
+    acc[k].push(item);
+    return acc;
+  }, {});
+}
+
+function CollectionGroups({ products }) {
+  const byCollection = groupBy(products, "collection");
+
+  const collectionKeys = Object.keys(byCollection).sort((a, b) => {
+    if (a === "null" || a === "undefined") return 1;
+    if (b === "null" || b === "undefined") return -1;
+    return Number(a) - Number(b);
+  });
+
+  return (
+    <div className="space-y-24">
+      {collectionKeys.map((colKey) => {
+        const byType = groupBy(byCollection[colKey], "productType");
+        const typeKeys = Object.keys(byType).sort();
+
+        return (
+          <section key={colKey}>
+            <div className="flex items-center gap-4 mb-12">
+              <p className="font-mono text-xs" style={{ color: "var(--ember)", letterSpacing: "0.3em" }}>
+                {colKey === "null" || colKey === "undefined" ? "UNCATEGORIZED" : `COLLECTION ${colKey}`}
+              </p>
+              <div className="flex-1 h-px" style={{ background: "var(--border)" }} />
+            </div>
+
+            <div className="space-y-16">
+              {typeKeys.map((typeKey) => (
+                <div key={typeKey}>
+                  <p className="font-mono text-xs mb-6" style={{ color: "var(--muted)", letterSpacing: "0.25em" }}>
+                    {typeKey.replace(/-/g, " ").toUpperCase()}
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {byType[typeKey].map((product, i) => (
+                      <ProductCard key={product.id} product={product} priority={i < 2} />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function ShopPage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,9 +96,7 @@ export default function ShopPage() {
         {loading ? (
           <div className="py-40 text-center"><p className="font-mono text-xs" style={{ color: "var(--muted)", letterSpacing: "0.3em" }}>Loading collection...</p></div>
         ) : products.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products.map((product, i) => <ProductCard key={product.id} product={product} priority={i < 2} />)}
-          </div>
+          <CollectionGroups products={products} />
         ) : (
           <div className="py-40 text-center">
             <p className="font-display text-2xl mb-4" style={{ color: "var(--muted)", letterSpacing: "0.2em" }}>Spinning the web...</p>
