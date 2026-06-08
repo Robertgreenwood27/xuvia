@@ -63,7 +63,7 @@ const stripeAppearance = {
   },
 };
 
-function CheckoutForm({ items, subtotal }) {
+function CheckoutForm({ items, subtotal, intentId }) {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -73,8 +73,44 @@ function CheckoutForm({ items, subtotal }) {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [shipping, setShipping] = useState(null);
+  const [shippingLoading, setShippingLoading] = useState(false);
+  const [shippingError, setShippingError] = useState("");
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  const addressComplete = form.firstName && form.lastName && form.email && form.phone &&
+    form.address1 && form.city && form.state && form.zip && form.country;
+
+  const calculateShipping = async () => {
+    if (!addressComplete) return;
+    setShippingLoading(true);
+    setShippingError("");
+    setShipping(null);
+    try {
+      const res = await fetch("/api/checkout/shipping", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ address: form, items }),
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      setShipping(data.shipping);
+      if (intentId) {
+        await fetch("/api/checkout/intent", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ intentId, amount: subtotal + data.shipping }),
+        });
+      }
+    } catch (err) {
+      setShippingError("Could not calculate shipping. Please check your address.");
+    } finally {
+      setShippingLoading(false);
+    }
+  };
+
+  const total = subtotal + (shipping ?? 0);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -141,8 +177,8 @@ function CheckoutForm({ items, subtotal }) {
               <input required type="email" value={form.email} onChange={set("email")} style={inputStyle} />
             </div>
             <div className="mt-4">
-              <label style={labelStyle}>PHONE (OPTIONAL)</label>
-              <input type="tel" value={form.phone} onChange={set("phone")} style={inputStyle} />
+              <label style={labelStyle}>PHONE</label>
+              <input required type="tel" value={form.phone} onChange={set("phone")} style={inputStyle} />
             </div>
           </div>
 
@@ -199,13 +235,29 @@ function CheckoutForm({ items, subtotal }) {
             </p>
           )}
 
+          {shipping === null && (
+            <button
+              type="button"
+              onClick={calculateShipping}
+              disabled={!addressComplete || shippingLoading}
+              className="btn-primary w-full justify-center"
+              style={{ fontSize: "0.75rem", opacity: (!addressComplete || shippingLoading) ? 0.6 : 1 }}
+            >
+              {shippingLoading ? "Calculating..." : "Calculate Shipping"}
+            </button>
+          )}
+          {shippingError && (
+            <p className="font-mono text-xs p-4" style={{ color: "#ff6b6b", background: "rgba(255,107,107,0.08)", border: "1px solid rgba(255,107,107,0.2)" }}>
+              {shippingError}
+            </p>
+          )}
           <button
             type="submit"
-            disabled={loading || !stripe}
+            disabled={loading || !stripe || shipping === null}
             className="btn-primary w-full justify-center"
-            style={{ fontSize: "0.75rem", opacity: loading ? 0.6 : 1 }}
+            style={{ fontSize: "0.75rem", opacity: (loading || shipping === null) ? 0.6 : 1 }}
           >
-            {loading ? "Processing..." : `Pay $${subtotal.toFixed(2)}`}
+            {loading ? "Processing..." : `Pay $${total.toFixed(2)}`}
             {!loading && (
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M5 12h14M12 5l7 7-7 7" />
@@ -252,12 +304,16 @@ function CheckoutForm({ items, subtotal }) {
             </div>
             <div className="flex justify-between mb-4">
               <span className="font-mono text-xs" style={{ color: "var(--muted)" }}>Shipping</span>
-              <span className="font-mono text-xs" style={{ color: "var(--muted)" }}>Included</span>
+              <span className="font-mono text-xs" style={{ color: "var(--bone)" }}>
+                {shipping === null ? "Enter address" : `$${shipping.toFixed(2)}`}
+              </span>
             </div>
             <hr style={{ borderColor: "var(--border)", marginBottom: "1rem" }} />
             <div className="flex justify-between">
               <span className="font-display text-xs tracking-widest" style={{ color: "var(--bone)" }}>TOTAL</span>
-              <span className="font-display text-sm" style={{ color: "var(--ember)" }}>${subtotal.toFixed(2)}</span>
+              <span className="font-display text-sm" style={{ color: "var(--ember)" }}>
+                {shipping === null ? `$${subtotal.toFixed(2)}+` : `$${total.toFixed(2)}`}
+              </span>
             </div>
           </div>
         </div>
@@ -269,6 +325,7 @@ function CheckoutForm({ items, subtotal }) {
 export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart();
   const [clientSecret, setClientSecret] = useState(null);
+  const [intentId, setIntentId] = useState(null);
 
   useEffect(() => {
     if (items.length === 0) return;
@@ -278,8 +335,11 @@ export default function CheckoutPage() {
       body: JSON.stringify({ amount: subtotal }),
     })
       .then((r) => r.json())
-      .then((data) => setClientSecret(data.clientSecret));
-  }, []);
+      .then((data) => {
+        setClientSecret(data.clientSecret);
+        setIntentId(data.intentId);
+      });
+  }, [items.length]);
 
   if (items.length === 0) {
     return (
@@ -304,7 +364,7 @@ export default function CheckoutPage() {
         </h1>
         {clientSecret ? (
           <Elements stripe={stripePromise} options={{ clientSecret, appearance: stripeAppearance }}>
-            <CheckoutForm items={items} subtotal={subtotal} clearCart={clearCart} />
+            <CheckoutForm items={items} subtotal={subtotal} clearCart={clearCart} intentId={intentId} />
           </Elements>
         ) : (
           <div className="py-20 text-center">
