@@ -1,9 +1,11 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 import { speciesList, getSpeciesBySlug } from "@/lib/species";
+import { getSpeciesImage } from "@/lib/species-images";
 import { products as localProducts } from "@/lib/products";
 import { getProducts, normalizeProduct } from "@/lib/printify";
 
@@ -67,6 +69,7 @@ export default async function SpeciesPage({ params }) {
 
   const products = await fetchSpeciesProducts(s.species);
   const index = speciesList.findIndex((x) => x.slug === s.slug);
+  const photo = getSpeciesImage(s.slug);
 
   const jsonLd = [
     {
@@ -74,6 +77,7 @@ export default async function SpeciesPage({ params }) {
       "@type": "Article",
       headline: `${s.commonName} (${s.species}) — XUVIA Field Guide`,
       description: `Keeper field notes on ${s.species}: range, habitat, temperament.`,
+      ...(photo && { image: `${baseUrl}${photo}` }),
       author: { "@type": "Organization", name: "XUVIA" },
       publisher: { "@type": "Organization", name: "XUVIA", url: baseUrl },
       mainEntityOfPage: `${baseUrl}/species/${s.slug}`,
@@ -160,11 +164,40 @@ export default async function SpeciesPage({ params }) {
 
         {/* ─── SPECIMEN LABEL ──────────────────────────────── */}
         <section className="px-6 py-16">
+          <div className="max-w-4xl mx-auto">
+
+            {photo && (
+              <figure
+                className="mb-12 p-3"
+                style={{ background: "var(--ash)", border: "1px solid var(--border)" }}
+              >
+                <div className="relative overflow-hidden" style={{ aspectRatio: "16 / 9" }}>
+                  <Image
+                    src={photo}
+                    alt={`${s.commonName} (${s.species})`}
+                    fill
+                    sizes="(min-width: 896px) 868px, 100vw"
+                    className="object-cover"
+                    priority
+                  />
+                </div>
+                <figcaption
+                  className="font-mono text-xs pt-3 text-center"
+                  style={{ color: "var(--muted)", letterSpacing: "0.2em" }}
+                >
+                  PLATE {String(index + 1).padStart(3, "0")} · <span className="italic">{s.species}</span>
+                </figcaption>
+              </figure>
+            )}
+
+          </div>
+
           <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-12">
-            <div
-              className="md:col-span-2 p-8 self-start"
-              style={{ background: "var(--ash)", border: "1px solid var(--border)" }}
-            >
+            <div className="md:col-span-2 self-start">
+              <div
+                className="p-8"
+                style={{ background: "var(--ash)", border: "1px solid var(--border)" }}
+              >
               <p className="font-mono text-xs mb-6" style={{ color: "var(--ember)", letterSpacing: "0.3em" }}>
                 SPECIMEN LABEL
               </p>
@@ -187,6 +220,7 @@ export default async function SpeciesPage({ params }) {
                   </div>
                 ))}
               </dl>
+              </div>
             </div>
 
             <div className="md:col-span-3">

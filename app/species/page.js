@@ -1,7 +1,9 @@
 import Link from "next/link";
+import Image from "next/image";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { speciesList } from "@/lib/species";
+import { getSpeciesImage } from "@/lib/species-images";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://xuvia.co";
 
@@ -16,6 +18,7 @@ export const metadata = {
       "Every design starts with a real animal. Meet the species: taxonomy, range, temperament, and field notes from twenty years of keeping.",
     url: `${baseUrl}/species`,
     type: "website",
+    images: [{ url: `${baseUrl}/OGimage.png`, width: 1200, height: 630 }],
   },
 };
 
@@ -71,12 +74,28 @@ export default function FieldGuidePage() {
 
       <main className="max-w-7xl mx-auto px-6 py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {speciesList.map((s, i) => (
+          {speciesList.map((s, i) => {
+            const photo = getSpeciesImage(s.slug);
+            return (
             <Link
               key={s.slug}
               href={`/species/${s.slug}`}
-              className="product-card block p-8 md:p-10"
+              className="product-card block p-8 md:p-10 group"
             >
+              {photo && (
+                <div
+                  className="relative overflow-hidden mb-8"
+                  style={{ aspectRatio: "16 / 9", border: "1px solid var(--border)" }}
+                >
+                  <Image
+                    src={photo}
+                    alt={`${s.commonName} (${s.species})`}
+                    fill
+                    sizes="(min-width: 768px) 50vw, 100vw"
+                    className="card-image object-cover"
+                  />
+                </div>
+              )}
               <div className="flex items-start justify-between mb-6">
                 <span
                   className="font-mono text-xs px-3 py-1"
@@ -133,7 +152,8 @@ export default function FieldGuidePage() {
                 </svg>
               </div>
             </Link>
-          ))}
+            );
+          })}
         </div>
 
         <p className="mt-16 text-center font-mono text-xs" style={{ color: "var(--muted)", letterSpacing: "0.2em" }}>

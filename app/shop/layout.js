@@ -7,6 +7,7 @@ export const metadata = {
     description:
       "Limited run sublimation apparel for those who understand what lives in the dark. Every piece made to order.",
     type: "website",
+    images: [{ url: "/OGimage.png", width: 1200, height: 630 }],
   },
 };
 
