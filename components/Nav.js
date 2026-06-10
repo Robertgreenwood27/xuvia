@@ -42,8 +42,8 @@ export default function Nav() {
           {/* Desktop links */}
           <div className="hidden md:flex items-center gap-10">
             <Link href="/shop" className="nav-link">Shop</Link>
+            <Link href="/species" className="nav-link">Field Guide</Link>
             <Link href="/#about" className="nav-link">About</Link>
-            {/*<Link href="/#contact" className="nav-link">Contact</Link>*/}
           </div>
 
           {/* Right: cart + mobile toggle */}
@@ -106,8 +106,8 @@ export default function Nav() {
         >
           {[
             { label: "Shop", href: "/shop" },
+            { label: "Field Guide", href: "/species" },
             { label: "About", href: "/#about" },
-            { label: "Contact", href: "/#contact" },
           ].map((item) => (
             <Link
               key={item.label}

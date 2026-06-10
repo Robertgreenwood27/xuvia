@@ -1,5 +1,6 @@
 import { products as localProducts } from "@/lib/products";
 import { getProducts } from "@/lib/printify";
+import { speciesList } from "@/lib/species";
 
 export default async function sitemap() {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://xuvia.co";
@@ -23,9 +24,18 @@ export default async function sitemap() {
     priority: 0.8,
   }));
 
+  const speciesPages = speciesList.map((s) => ({
+    url: `${baseUrl}/species/${s.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly",
+    priority: 0.7,
+  }));
+
   return [
     { url: baseUrl, lastModified: new Date(), changeFrequency: "monthly", priority: 1 },
     { url: `${baseUrl}/shop`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.9 },
+    { url: `${baseUrl}/species`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
     ...productPages,
+    ...speciesPages,
   ];
 }

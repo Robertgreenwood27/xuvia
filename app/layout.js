@@ -48,14 +48,23 @@ export const metadata = {
   },
 };
 
-const orgJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "XUVIA",
-  url: baseUrl,
-  description:
-    "Keeper-made apparel and goods inspired by exotic pets, real species, detailed patterns, posture, color, and the animals that started the obsession.",
-};
+const orgJsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "XUVIA",
+    url: baseUrl,
+    logo: `${baseUrl}/logo.png`,
+    description:
+      "Keeper-made apparel and goods inspired by exotic pets, real species, detailed patterns, posture, color, and the animals that started the obsession.",
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "XUVIA",
+    url: baseUrl,
+  },
+];
 
 export default function RootLayout({ children }) {
   return (

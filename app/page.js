@@ -2,37 +2,9 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
+import WebCanvas from "@/components/WebCanvas";
 import { products as localProducts } from "@/lib/products";
 import { getProducts, normalizeProduct } from "@/lib/printify";
-
-// Web thread SVG decorations
-function WebThreads() {
-  return (
-    <svg
-      className="absolute inset-0 w-full h-full pointer-events-none"
-      viewBox="0 0 1200 800"
-      xmlns="http://www.w3.org/2000/svg"
-      preserveAspectRatio="xMidYMid slice"
-    >
-      <g opacity="0.07" stroke="#c8a96e" strokeWidth="0.5" fill="none">
-        {/* Corner web threads */}
-        <line x1="0" y1="0" x2="300" y2="200" strokeDasharray="4 8" />
-        <line x1="0" y1="0" x2="400" y2="150" strokeDasharray="4 8" />
-        <line x1="0" y1="0" x2="200" y2="300" strokeDasharray="4 8" />
-        <line x1="1200" y1="0" x2="900" y2="200" strokeDasharray="4 8" />
-        <line x1="1200" y1="0" x2="850" y2="150" strokeDasharray="4 8" />
-        <line x1="1200" y1="0" x2="1000" y2="280" strokeDasharray="4 8" />
-        <line x1="0" y1="800" x2="250" y2="600" strokeDasharray="4 8" />
-        <line x1="1200" y1="800" x2="950" y2="600" strokeDasharray="4 8" />
-        {/* Connecting arcs */}
-        <path d="M 0 0 Q 600 300 1200 0" strokeDasharray="6 12" />
-        <path d="M 300 200 Q 600 350 900 200" strokeDasharray="3 9" />
-        <path d="M 400 150 Q 600 280 850 150" strokeDasharray="3 9" />
-        <path d="M 200 300 Q 600 450 1000 280" strokeDasharray="3 9" />
-      </g>
-    </svg>
-  );
-}
 
 async function fetchFeatured() {
   if (process.env.PRINTIFY_API_KEY && process.env.PRINTIFY_SHOP_ID) {
@@ -67,7 +39,7 @@ export default async function HomePage() {
       "radial-gradient(ellipse 80% 60% at 50% 40%, rgba(139,0,0,0.07) 0%, transparent 70%)",
   }}
 >
-  <WebThreads />
+  <WebCanvas />
 
   {/* Ambient ember glow top */}
   <div
@@ -190,6 +162,34 @@ export default async function HomePage() {
               View All Products
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* ─── FIELD GUIDE TEASER ─────────────────────────────── */}
+      <section
+        className="relative py-20 px-6"
+        style={{ background: "var(--obsidian)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}
+      >
+        <div className="max-w-3xl mx-auto text-center">
+          <p className="font-mono text-xs mb-5" style={{ color: "var(--ember)", letterSpacing: "0.35em" }}>
+            THE FIELD GUIDE
+          </p>
+          <h2
+            className="font-display text-2xl md:text-4xl mb-6"
+            style={{ color: "var(--silk)", letterSpacing: "0.1em" }}
+          >
+            Every design starts with a real animal.
+          </h2>
+          <p className="text-sm mb-10 mx-auto" style={{ color: "var(--muted)", maxWidth: "440px", lineHeight: "1.8" }}>
+            Meet the species behind the work — taxonomy, range, temperament,
+            and field notes from twenty years of keeping.
+          </p>
+          <Link href="/species" className="btn-ghost">
+            Open the Field Guide
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </Link>
         </div>
       </section>
 

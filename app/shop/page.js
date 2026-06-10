@@ -89,8 +89,25 @@ function CollectionGroups({ products }) {
 export default async function ShopPage() {
   const products = await fetchProducts();
 
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://xuvia.co";
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "The XUVIA Collection",
+    itemListElement: products.map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `${baseUrl}/product/${p.id}`,
+      name: p.commonName ? `${p.commonName} — ${p.name}` : p.name,
+    })),
+  };
+
   return (
     <div className="noise" style={{ background: "var(--obsidian)", minHeight: "100vh" }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
       <Nav />
       <div className="pt-40 pb-20 px-6 relative overflow-hidden" style={{ background: "linear-gradient(to bottom, var(--void), var(--obsidian))", borderBottom: "1px solid var(--border)" }}>
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-28 opacity-40" style={{ background: "linear-gradient(to bottom, var(--ember), transparent)" }} />

@@ -7,9 +7,149 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { useCart } from "@/lib/cart";
 
-export default function ProductPage({ product }) {
+// Spec rows shown under the divider, keyed by product type.
+const DETAILS_BY_TYPE = {
+  "phone-case": [
+    ["Case", "Slim, impact-resistant shell"],
+    ["Print", "Vivid edge-to-edge print"],
+    ["Care", "Wipe clean with a soft, damp cloth"],
+  ],
+  poster: [
+    ["Paper", "Museum-grade matte"],
+    ["Print", "Archival pigment inks"],
+    ["Framing", "Ships unframed, ready to mount"],
+  ],
+  apparel: [
+    ["Print", "All-over full sublimation"],
+    ["Material", "100% polyester"],
+    ["Care", "Machine wash cold, tumble dry low"],
+  ],
+};
+
+function detailsFor(product) {
+  const key = (product.productType || "").toLowerCase();
+  return DETAILS_BY_TYPE[key] || DETAILS_BY_TYPE.apparel;
+}
+
+function ShareButton({ product, canonical }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = async () => {
+    const url = canonical || window.location.href;
+    const title = `${product.commonName || product.name} — XUVIA`;
+    const text = product.species
+      ? `${product.commonName} (${product.species})`
+      : product.name;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, text, url });
+        return;
+      } catch {
+        // user cancelled or share failed — fall through to copy
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {}
+  };
+
+  return (
+    <button
+      onClick={handleShare}
+      className="btn-ghost w-full justify-center"
+      style={{ fontSize: "0.65rem" }}
+    >
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <circle cx="18" cy="5" r="3" />
+        <circle cx="6" cy="12" r="3" />
+        <circle cx="18" cy="19" r="3" />
+        <line x1="8.6" y1="10.7" x2="15.4" y2="6.3" />
+        <line x1="8.6" y1="13.3" x2="15.4" y2="17.7" />
+      </svg>
+      {copied ? "Link Copied" : "Share This Specimen"}
+    </button>
+  );
+}
+
+function SpecimenPanel({ product, speciesSlug }) {
+  if (!product.species) return null;
+
+  return (
+    <div
+      className="mt-10 p-6"
+      style={{ background: "var(--ash)", border: "1px solid var(--border)" }}
+    >
+      <div className="flex items-center justify-between mb-5">
+        <p className="font-mono text-xs" style={{ color: "var(--ember)", letterSpacing: "0.3em" }}>
+          SPECIMEN
+        </p>
+        {product.abbr && (
+          <span
+            className="font-mono text-xs px-2 py-1"
+            style={{ color: "var(--ember)", border: "1px solid var(--border-bright)", letterSpacing: "0.15em" }}
+          >
+            {product.abbr}
+          </span>
+        )}
+      </div>
+
+      <dl className="space-y-3">
+        <div className="flex gap-6">
+          <dt className="font-mono text-xs w-20 shrink-0 pt-0.5" style={{ color: "var(--muted)", letterSpacing: "0.15em" }}>
+            Species
+          </dt>
+          <dd className="text-sm italic" style={{ color: "var(--bone)" }}>
+            {product.species}
+          </dd>
+        </div>
+        {product.commonName && (
+          <div className="flex gap-6">
+            <dt className="font-mono text-xs w-20 shrink-0 pt-0.5" style={{ color: "var(--muted)", letterSpacing: "0.15em" }}>
+              Common
+            </dt>
+            <dd className="text-sm" style={{ color: "var(--bone)" }}>
+              {product.commonName}
+              {product.nickname && (
+                <span style={{ color: "var(--muted)" }}> · &ldquo;{product.nickname}&rdquo;</span>
+              )}
+            </dd>
+          </div>
+        )}
+        {product.group && (
+          <div className="flex gap-6">
+            <dt className="font-mono text-xs w-20 shrink-0 pt-0.5" style={{ color: "var(--muted)", letterSpacing: "0.15em" }}>
+              World
+            </dt>
+            <dd className="text-sm" style={{ color: "var(--bone)" }}>
+              {product.group.replace(/\b\w/g, (c) => c.toUpperCase())}
+            </dd>
+          </div>
+        )}
+      </dl>
+
+      {speciesSlug && (
+        <Link
+          href={`/species/${speciesSlug}`}
+          className="mt-5 inline-flex items-center gap-2 font-display text-xs"
+          style={{ color: "var(--ember)", letterSpacing: "0.18em", textDecoration: "none" }}
+        >
+          <span>Read the Field Guide entry</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </Link>
+      )}
+    </div>
+  );
+}
+
+export default function ProductPage({ product, speciesSlug = null, canonical = null }) {
   const [selectedSize, setSelectedSize] = useState(null);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [sizeError, setSizeError] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
   const { addToCart } = useCart();
 
@@ -26,13 +166,12 @@ export default function ProductPage({ product }) {
     );
   }
 
-    const handleAddToCart = () => {
+  const handleAddToCart = () => {
     if (product.sizes?.length > 0 && !selectedSize) {
-      alert("Please select a size.");
+      setSizeError(true);
       return;
     }
     const size = typeof selectedSize === "object" ? selectedSize : { label: selectedSize, variantId: null, price: product.price };
-    console.log("Adding to cart:", { productId: product.printifyProductId, variantId: size.variantId, size: size.label });
     addToCart({
       productId: product.printifyProductId,
       variantId: size.variantId,
@@ -143,6 +282,11 @@ export default function ProductPage({ product }) {
               <div className="mb-8">
                 <div className="flex items-center justify-between mb-4">
                   <p className="font-display text-xs" style={{ color: "var(--bone)", letterSpacing: "0.2em" }}>SIZE</p>
+                  {sizeError && (
+                    <p className="font-mono text-xs" style={{ color: "var(--spider)", letterSpacing: "0.1em" }}>
+                      Select a size first
+                    </p>
+                  )}
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {product.sizes.map((size) => {
@@ -151,7 +295,10 @@ export default function ProductPage({ product }) {
                       <button
                         key={label}
                         className={`size-btn ${selectedSize?.label === label || selectedSize === label ? "selected" : ""}`}
-                        onClick={() => setSelectedSize(size)}
+                        onClick={() => {
+                          setSelectedSize(size);
+                          setSizeError(false);
+                        }}
                       >
                         {label}
                       </button>
@@ -163,7 +310,7 @@ export default function ProductPage({ product }) {
 
             <button
               onClick={handleAddToCart}
-              className="btn-primary w-full justify-center mb-4"
+              className="btn-primary w-full justify-center mb-3"
               style={{ fontSize: "0.75rem" }}
             >
               {addedToCart ? (
@@ -185,24 +332,24 @@ export default function ProductPage({ product }) {
               )}
             </button>
 
-            <p className="font-mono text-xs text-center" style={{ color: "var(--muted)", letterSpacing: "0.15em" }}>
+            <ShareButton product={product} canonical={canonical} />
+
+            <p className="font-mono text-xs text-center mt-4" style={{ color: "var(--muted)", letterSpacing: "0.15em" }}>
               Usually arrives in 2–7 business days
             </p>
 
             <hr className="divider-ember mt-10 mb-8" />
 
             <div className="space-y-3">
-              {[
-                ["Print", "All-over full sublimation"],
-                ["Material", "100% polyester"],
-                ["Care", "Machine wash cold, tumble dry low"],
-              ].map(([label, value]) => (
+              {detailsFor(product).map(([label, value]) => (
                 <div key={label} className="flex gap-6">
                   <span className="font-mono text-xs w-16 shrink-0" style={{ color: "var(--muted)", letterSpacing: "0.15em" }}>{label}</span>
                   <span className="font-mono text-xs" style={{ color: "var(--bone)" }}>{value}</span>
                 </div>
               ))}
             </div>
+
+            <SpecimenPanel product={product} speciesSlug={speciesSlug} />
           </div>
         </div>
       </main>

@@ -1,0 +1,218 @@
+{
+  "29143732": {
+    "collection": 1,
+    "productType": "poster",
+    "species": "Pterinochilus murinus",
+    "commonName": "Orange Baboon Tarantula",
+    "abbr": "OBT",
+    "nickname": "Orange Bitey Thing",
+    "group": "old world tarantula",
+    "aliases": [
+      "OBT poster",
+      "OBT tarantula poster",
+      "P. murinus poster",
+      "Pterinochilus murinus poster",
+      "Orange Baboon Tarantula poster",
+      "Orange Bitey Thing poster",
+      "tarantula wall art",
+      "old world tarantula poster"
+    ]
+  },
+  "29143779": {
+    "collection": 1,
+    "productType": "poster",
+    "species": "Monocentropus balfouri",
+    "commonName": "Socotra Island Blue Baboon",
+    "abbr": "M. balfouri",
+    "nickname": null,
+    "group": "old world tarantula",
+    "aliases": [
+      "M. balfouri poster",
+      "Monocentropus balfouri poster",
+      "Socotra Island Blue Baboon poster",
+      "blue baboon tarantula poster",
+      "tarantula wall art",
+      "old world tarantula poster"
+    ]
+  },
+  "29143837": {
+    "collection": 1,
+    "productType": "poster",
+    "species": "Heteroscodra maculata",
+    "commonName": "Togo Starburst Baboon",
+    "abbr": "H. mac",
+    "nickname": null,
+    "group": "old world tarantula",
+    "aliases": [
+      "H. mac poster",
+      "Heteroscodra maculata poster",
+      "Togo Starburst poster",
+      "Togo Starburst Baboon poster",
+      "tarantula wall art",
+      "old world tarantula poster"
+    ]
+  },
+  "29143949": {
+    "collection": 1,
+    "productType": "poster",
+    "species": "Chromatopelma cyaneopubescens",
+    "commonName": "Greenbottle Blue",
+    "abbr": "GBB",
+    "nickname": null,
+    "group": "new world tarantula",
+    "aliases": [
+      "GBB poster",
+      "GBB tarantula poster",
+      "C. cyaneopubescens poster",
+      "Chromatopelma cyaneopubescens poster",
+      "Greenbottle Blue poster",
+      "tarantula wall art",
+      "new world tarantula poster"
+    ]
+  },
+  "29144038": {
+    "collection": 1,
+    "productType": "poster",
+    "species": "Poecilotheria metallica",
+    "commonName": "Gooty Sapphire Ornamental",
+    "abbr": "P. metallica",
+    "nickname": "Gooty Sapphire",
+    "group": "old world tarantula",
+    "aliases": [
+      "P. metallica poster",
+      "Poecilotheria metallica poster",
+      "Gooty Sapphire poster",
+      "Gooty Sapphire Ornamental poster",
+      "blue tarantula poster",
+      "tarantula wall art",
+      "old world tarantula poster"
+    ]
+  },
+  "29121690": {
+    "collection": 1,
+    "productType": "long-sleeve",
+    "species": "Pterinochilus murinus",
+    "commonName": "Orange Baboon Tarantula",
+    "abbr": "OBT",
+    "nickname": "Orange Bitey Thing",
+    "group": "old world tarantula",
+    "aliases": [
+      "OBT shirt",
+      "OBT long sleeve shirt",
+      "OBT tarantula shirt",
+      "P. murinus shirt",
+      "Pterinochilus murinus shirt",
+      "Orange Baboon Tarantula shirt",
+      "Orange Bitey Thing shirt",
+      "old world tarantula shirt"
+    ]
+  },
+  "29122136": {
+    "collection": 1,
+    "productType": "long-sleeve",
+    "species": "Monocentropus balfouri",
+    "commonName": "Socotra Island Blue Baboon",
+    "abbr": "M. balfouri",
+    "nickname": null,
+    "group": "old world tarantula",
+    "aliases": [
+      "M. balfouri shirt",
+      "Monocentropus balfouri shirt",
+      "M balfouri long sleeve shirt",
+      "Socotra Island Blue Baboon shirt",
+      "blue baboon tarantula shirt",
+      "communal tarantula shirt",
+      "old world tarantula shirt"
+    ]
+  },
+  "29122503": {
+    "collection": 1,
+    "productType": "long-sleeve",
+    "species": "Poecilotheria metallica",
+    "commonName": "Gooty Sapphire Ornamental",
+    "abbr": "P. metallica",
+    "nickname": "Gooty Sapphire",
+    "group": "old world tarantula",
+    "aliases": [
+      "P. metallica shirt",
+      "Poecilotheria metallica shirt",
+      "Gooty Sapphire shirt",
+      "Gooty Sapphire Ornamental long sleeve shirt",
+      "blue tarantula shirt",
+      "pokie shirt",
+      "ornamental tarantula shirt",
+      "old world tarantula shirt"
+    ]
+  },
+  "29122603": {
+    "collection": 1,
+    "productType": "long-sleeve",
+    "species": "Heteroscodra maculata",
+    "commonName": "Togo Starburst Baboon",
+    "abbr": "H. mac",
+    "nickname": null,
+    "group": "old world tarantula",
+    "aliases": [
+      "H. mac shirt",
+      "H mac long sleeve shirt",
+      "Heteroscodra maculata shirt",
+      "Togo Starburst shirt",
+      "Togo Starburst Baboon shirt",
+      "arboreal tarantula shirt",
+      "old world tarantula shirt"
+    ]
+  },
+  "29122663": {
+    "collection": 1,
+    "productType": "long-sleeve",
+    "species": "Chromatopelma cyaneopubescens",
+    "commonName": "Greenbottle Blue",
+    "abbr": "GBB",
+    "nickname": null,
+    "group": "new world tarantula",
+    "aliases": [
+      "GBB shirt",
+      "GBB long sleeve shirt",
+      "GBB tarantula shirt",
+      "C. cyaneopubescens shirt",
+      "Chromatopelma cyaneopubescens shirt",
+      "Greenbottle Blue shirt",
+      "new world tarantula shirt"
+    ]
+  },
+  "29151805": {
+    "collection": 1,
+    "productType": "phone-case",
+    "species": "Pterinochilus murinus",
+    "commonName": "Orange Baboon Tarantula",
+    "abbr": "OBT",
+    "nickname": "Orange Bitey Thing",
+    "group": "old world tarantula",
+    "aliases": [
+      "OBT phone case",
+      "OBT tarantula phone case",
+      "P. murinus phone case",
+      "Pterinochilus murinus phone case",
+      "Orange Baboon Tarantula phone case",
+      "Orange Bitey Thing phone case",
+      "old world tarantula phone case"
+    ]
+  },
+  "29153748": {
+    "collection": 1,
+    "productType": "phone-case",
+    "species": "Chromatopelma cyaneopubescens",
+    "commonName": "Greenbottle Blue",
+    "abbr": "GBB",
+    "nickname": null,
+    "group": "new world tarantula",
+    "aliases": [
+      "GBB phone case",
+      "GBB tarantula phone case",
+      "C. cyaneopubescens phone case",
+      "Chromatopelma cyaneopubescens phone case",
+      "Greenbottle Blue phone case",
+      "new world tarantula phone case"
+    ]
+  }
+}

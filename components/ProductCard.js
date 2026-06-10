@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 export default function ProductCard({ product, priority = false }) {
+  const kicker = [product.subtitle, product.type].filter(Boolean).join(" · ") || product.type;
   return (
     <Link href={`/product/${product.id}`} className="product-card block group">
       {/* Image container */}
@@ -48,7 +49,7 @@ export default function ProductCard({ product, priority = false }) {
               className="font-display text-xs mb-1"
               style={{ color: "var(--muted)", letterSpacing: "0.2em" }}
             >
-              {product.subtitle || product.type}
+              {kicker}
             </p>
             <h3
               className="font-display text-lg"
@@ -61,7 +62,7 @@ export default function ProductCard({ product, priority = false }) {
             className="font-mono text-sm pt-1 whitespace-nowrap"
             style={{ color: "var(--ember)" }}
           >
-            ${product.price}
+            ${typeof product.price === "number" ? product.price.toFixed(2) : product.price}
           </span>
         </div>
 
