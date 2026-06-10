@@ -30,7 +30,6 @@ export const metadata = {
     default: "XUVIA",
     template: "%s — XUVIA",
   },
-  icons: { icon: "/logo.png" },
   description:
     "Keeper-made apparel and goods inspired by exotic pets, real species, fine details, and the strange beauty of the animals themselves.",
   openGraph: {
@@ -56,7 +55,7 @@ const orgJsonLd = [
     "@type": "Organization",
     name: "XUVIA",
     url: baseUrl,
-    logo: `${baseUrl}/logo.png`,
+    logo: `${baseUrl}/icon-512.png`,
     description:
       "Keeper-made apparel and goods inspired by exotic pets, real species, detailed patterns, posture, color, and the animals that started the obsession.",
   },
