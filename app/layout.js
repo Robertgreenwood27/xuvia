@@ -2,6 +2,7 @@ import { Cinzel, Raleway, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/lib/cart";
 import CartDrawer from "@/components/CartDrawer";
+import { Analytics } from "@vercel/analytics/next";
 
 const cinzel = Cinzel({
   subsets: ["latin"],
@@ -78,6 +79,7 @@ export default function RootLayout({ children }) {
           {children}
           <CartDrawer />
         </CartProvider>
+        <Analytics />
       </body>
     </html>
   );
