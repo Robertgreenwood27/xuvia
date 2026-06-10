@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 import { speciesList, getSpeciesBySlug } from "@/lib/species";
-import { loadGoogleFont, og } from "@/lib/og";
+import { loadGoogleFont, og, ogOrigin } from "@/lib/og";
 
 // Edge runtime: the Node build of @vercel/og crashes on Windows (broken
 // bundled-font path). See the product opengraph-image for details.
@@ -16,12 +16,14 @@ const PHOTO_EXTENSIONS = ["jpg", "jpeg", "png"];
 // Edge has no fs — probe the public folder over HTTP and inline the photo
 // as a data URI so the card never ships with a broken frame.
 async function loadSpeciesPhoto(slug) {
-  const origin =
-    process.env.NEXT_PUBLIC_BASE_URL ||
-    `http://localhost:${process.env.PORT || 3000}`;
+  const origin = ogOrigin();
   for (const ext of PHOTO_EXTENSIONS) {
     try {
-      const res = await fetch(`${origin}/species/${slug}.${ext}`);
+      // no-store: Next's fetch cache persists across builds and would keep
+      // serving an old photo after the file changes
+      const res = await fetch(`${origin}/species/${slug}.${ext}`, {
+        cache: "no-store",
+      });
       const type = res.headers.get("content-type") || "";
       if (!res.ok || !type.startsWith("image/")) continue;
       const bytes = new Uint8Array(await res.arrayBuffer());

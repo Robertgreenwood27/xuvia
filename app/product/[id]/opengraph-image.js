@@ -1,7 +1,5 @@
 import { ImageResponse } from "next/og";
-import { products as localProducts } from "@/lib/products";
-import { getProduct as fetchPrintifyProduct, normalizeProduct } from "@/lib/printify";
-import { loadGoogleFont, og } from "@/lib/og";
+import { loadGoogleFont, og, ogOrigin } from "@/lib/og";
 
 // Edge runtime: the Node build of @vercel/og crashes on Windows (broken
 // bundled-font path). Product photos are fetched via /api/og-image because
@@ -12,22 +10,29 @@ export const alt = "XUVIA specimen card";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
+// Product data comes from our own Node API route rather than Printify
+// directly — Printify's API isn't reliably reachable from the edge runtime
+// (and this keeps the API key out of the edge bundle).
 async function fetchProduct(id) {
-  const local = localProducts.find((p) => p.id === id || p.printifyProductId === id);
-  if (process.env.PRINTIFY_API_KEY && process.env.PRINTIFY_SHOP_ID) {
-    try {
-      const raw = await fetchPrintifyProduct(local?.printifyProductId || id);
-      return normalizeProduct(raw, local || {});
-    } catch {
-      // fall through to local
-    }
+  try {
+    const res = await fetch(`${ogOrigin()}/api/products/${id}`, {
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.product || null;
+  } catch {
+    return null;
   }
-  return local || null;
 }
 
 async function fetchImage(url) {
   try {
-    const res = await fetch(url, { headers: { Accept: "image/*" } });
+    // no-store: avoid Next's persistent fetch cache serving stale mockups
+    const res = await fetch(url, {
+      headers: { Accept: "image/*" },
+      cache: "no-store",
+    });
     if (!res.ok) return null;
     return {
       bytes: new Uint8Array(await res.arrayBuffer()),
@@ -46,10 +51,9 @@ async function loadProductImage(url) {
 
   let img = await fetchImage(url);
   if (!img) {
-    const origin =
-      process.env.NEXT_PUBLIC_BASE_URL ||
-      `http://localhost:${process.env.PORT || 3000}`;
-    img = await fetchImage(`${origin}/api/og-image?u=${encodeURIComponent(url)}`);
+    img = await fetchImage(
+      `${ogOrigin()}/api/og-image?u=${encodeURIComponent(url)}`
+    );
   }
   if (!img) {
     console.error("OG image: product photo unavailable", url);

@@ -90,7 +90,7 @@ export default function Footer() {
             <li>Made to order</li>
             <li>Small releases</li>
             <li>Catalog kept intentionally limited</li>
-            <li>Returns handled case by case</li>
+            <li>Made-to-order items are reviewed case by case. Damaged or incorrect items will be made right.</li>
           </ul>
         </div>
       </div>
