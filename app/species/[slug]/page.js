@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
+import ShareButton from "@/components/ShareButton";
 import { speciesList, getSpeciesBySlug } from "@/lib/species";
 import { getSpeciesImage } from "@/lib/species-images";
 import { products as localProducts } from "@/lib/products";
@@ -220,6 +221,15 @@ export default async function SpeciesPage({ params }) {
                   </div>
                 ))}
               </dl>
+              </div>
+
+              <div className="mt-4">
+                <ShareButton
+                  title={`${s.commonName} — XUVIA Field Guide`}
+                  text={`${s.commonName} (${s.species}) — field notes from the XUVIA Field Guide`}
+                  url={`${baseUrl}/species/${s.slug}`}
+                  label="Share This Specimen"
+                />
               </div>
             </div>
 

@@ -15,6 +15,7 @@ export default function ProductCard({ product, priority = false }) {
             src={product.image}
             alt={product.imageAlt || product.name}
             fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
             className="card-image object-cover"
             priority={priority}
           />

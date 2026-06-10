@@ -35,7 +35,7 @@ export default function Nav() {
               className="relative w-48 h-14 opacity-90 hover:opacity-100 transition-opacity"
               style={{ filter: "brightness(0.95)" }}
             >
-              <Image src="/logo.png" alt="XUVIA" fill style={{ objectFit: "contain", objectPosition: "left" }} />
+              <Image src="/logo.png" alt="XUVIA" fill sizes="192px" style={{ objectFit: "contain", objectPosition: "left" }} />
             </div>
           </Link>
 

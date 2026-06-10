@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import ShareButton from "@/components/ShareButton";
 import { useCart } from "@/lib/cart";
 
 // Spec rows shown under the divider, keyed by product type.
@@ -29,49 +30,6 @@ const DETAILS_BY_TYPE = {
 function detailsFor(product) {
   const key = (product.productType || "").toLowerCase();
   return DETAILS_BY_TYPE[key] || DETAILS_BY_TYPE.apparel;
-}
-
-function ShareButton({ product, canonical }) {
-  const [copied, setCopied] = useState(false);
-
-  const handleShare = async () => {
-    const url = canonical || window.location.href;
-    const title = `${product.commonName || product.name} — XUVIA`;
-    const text = product.species
-      ? `${product.commonName} (${product.species})`
-      : product.name;
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ title, text, url });
-        return;
-      } catch {
-        // user cancelled or share failed — fall through to copy
-      }
-    }
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {}
-  };
-
-  return (
-    <button
-      onClick={handleShare}
-      className="btn-ghost w-full justify-center"
-      style={{ fontSize: "0.65rem" }}
-    >
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <circle cx="18" cy="5" r="3" />
-        <circle cx="6" cy="12" r="3" />
-        <circle cx="18" cy="19" r="3" />
-        <line x1="8.6" y1="10.7" x2="15.4" y2="6.3" />
-        <line x1="8.6" y1="13.3" x2="15.4" y2="17.7" />
-      </svg>
-      {copied ? "Link Copied" : "Share This Specimen"}
-    </button>
-  );
 }
 
 function SpecimenPanel({ product, speciesSlug }) {
@@ -218,6 +176,7 @@ export default function ProductPage({ product, speciesSlug = null, canonical = n
                   src={images[activeImage]}
                   alt={product.imageAlt || product.name}
                   fill
+                  sizes="(min-width: 1024px) 50vw, 100vw"
                   className="object-cover"
                   priority
                 />
@@ -243,7 +202,7 @@ export default function ProductPage({ product, speciesSlug = null, canonical = n
                       background: "var(--ash)",
                     }}
                   >
-                    <Image src={src} alt="" fill className="object-cover" />
+                    <Image src={src} alt="" fill sizes="64px" className="object-cover" />
                   </button>
                 ))}
               </div>
@@ -332,7 +291,16 @@ export default function ProductPage({ product, speciesSlug = null, canonical = n
               )}
             </button>
 
-            <ShareButton product={product} canonical={canonical} />
+            <ShareButton
+              title={`${product.commonName || product.name} — XUVIA`}
+              text={
+                product.species
+                  ? `${product.commonName} (${product.species})`
+                  : product.name
+              }
+              url={canonical}
+              label="Share This Specimen"
+            />
 
             <p className="font-mono text-xs text-center mt-4" style={{ color: "var(--muted)", letterSpacing: "0.15em" }}>
               Usually arrives in 2–7 business days
