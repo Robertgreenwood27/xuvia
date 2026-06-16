@@ -6,15 +6,13 @@ const nextConfig = {
       { protocol: "https", hostname: "images-api.printify.com" },
       { protocol: "https", hostname: "*.cdn.printify.com" },
     ],
-    // Cache each optimized image for 31 days instead of the Next 14 default of
-    // 60s, so repeat visits and crawlers reuse a transformation instead of
-    // regenerating (and re-billing) it.
-    minimumCacheTTL: 2678400,
-    // Trim the width tables to what the layouts actually request. Defaults are
-    // 8 deviceSizes + 8 imageSizes = up to 16 variants per source image; this
-    // cuts it to 7, roughly halving transformations per image.
-    deviceSizes: [640, 828, 1080, 1920],
-    imageSizes: [64, 128, 256],
+    // Serve images straight from Printify's CDN instead of routing them through
+    // Vercel's optimizer. Printify mockups are already CDN-hosted and modestly
+    // sized (~130KB), and this drops billable image transformations to ~zero —
+    // which is what was breaking new product images with a 402 on the Hobby
+    // plan. To re-enable optimization (e.g. after upgrading to Pro), remove
+    // `unoptimized` and restore `minimumCacheTTL` / `deviceSizes` / `imageSizes`.
+    unoptimized: true,
   },
 };
 
