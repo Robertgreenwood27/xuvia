@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CONTACT_EMAIL, PRODUCTION_DAYS } from "@/lib/site";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -63,7 +64,9 @@ export default function Footer() {
             {[
               { label: "Shop All", href: "/shop" },
               { label: "Field Guide", href: "/species" },
-              { label: "About Xuvia", href: "/#about" },
+              { label: "About Xuvia", href: "/about" },
+              { label: "Shipping & Returns", href: "/shipping-returns" },
+              { label: "FAQ", href: "/shipping-returns#faq" },
             ].map((l) => (
               <li key={l.label}>
                 <Link
@@ -87,10 +90,19 @@ export default function Footer() {
             Info
           </p>
           <ul className="space-y-3 text-sm" style={{ color: "var(--muted)" }}>
-            <li>Made to order</li>
-            <li>Small releases</li>
-            <li>Catalog kept intentionally limited</li>
-            <li>Made-to-order items are reviewed case by case. Damaged or incorrect items will be made right.</li>
+            <li>Made to order · arrives in {PRODUCTION_DAYS}</li>
+            <li>
+              Damaged or wrong item? Replaced or refunded.{" "}
+              <Link href="/shipping-returns#returns" className="underline" style={{ color: "var(--ember)" }}>
+                Details
+              </Link>
+            </li>
+            <li>Secure checkout by Stripe</li>
+            <li>
+              <a href={`mailto:${CONTACT_EMAIL}`} className="underline" style={{ color: "var(--ember)" }}>
+                {CONTACT_EMAIL}
+              </a>
+            </li>
           </ul>
         </div>
       </div>

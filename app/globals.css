@@ -12,7 +12,7 @@
   --bone: #d4cfc8;
   --silk: #e8e4dd;
   --spider: #8b0000;
-  --muted: #5a5a64;
+  --muted: #8b8b95; /* ~5.8:1 on obsidian — keep secondary text readable */
   --border: rgba(200, 169, 110, 0.15);
   --border-bright: rgba(200, 169, 110, 0.4);
 }

@@ -3,6 +3,8 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 import WebCanvas from "@/components/WebCanvas";
+import BrandStory from "@/components/BrandStory";
+import { CONTACT_EMAIL, PRODUCTION_DAYS } from "@/lib/site";
 import { products as localProducts } from "@/lib/products";
 import { getProducts, normalizeProduct } from "@/lib/printify";
 
@@ -33,8 +35,9 @@ export default async function HomePage() {
 
       {/* ─── HERO ──────────────────────────────────────────── */}
 <section
-  className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
+  className="relative flex flex-col items-center justify-center overflow-hidden pt-28 pb-24"
   style={{
+    minHeight: "85svh",
     background:
       "radial-gradient(ellipse 80% 60% at 50% 40%, rgba(139,0,0,0.07) 0%, transparent 70%)",
   }}
@@ -79,16 +82,23 @@ export default async function HomePage() {
     </h1>
 
     <hr
-      className="divider-ember my-10 mx-auto animate-fade-up delay-300"
+      className="divider-ember my-8 mx-auto animate-fade-up delay-300"
       style={{ maxWidth: "200px" }}
     />
 
     {/* Sub */}
     <p
-      className="font-body text-base md:text-lg animate-fade-up delay-400 max-w-lg mx-auto leading-relaxed"
-      style={{ color: "var(--muted)", fontWeight: 300 }}
+      className="font-mono text-xs animate-fade-up delay-400 mb-4"
+      style={{ color: "var(--ember)", letterSpacing: "0.35em" }}
     >
-      For Keepers
+      FOR KEEPERS
+    </p>
+    <p
+      className="font-body text-base md:text-lg animate-fade-up delay-400 max-w-xl mx-auto leading-relaxed"
+      style={{ color: "var(--bone)", fontWeight: 300 }}
+    >
+      Tarantula shirts, phone cases, and art prints. Every design is drawn
+      from a real species by a keeper of twenty years.
     </p>
 
           {/* CTA buttons */}
@@ -99,27 +109,12 @@ export default async function HomePage() {
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
             </Link>
-            <Link href="#about" className="btn-ghost">
+            <Link href="/about" className="btn-ghost">
               My Story
             </Link>
           </div>
         </div>
 
-        {/* Scroll indicator */}
-        <div
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-fade-in delay-800"
-        >
-          <p className="font-mono text-xs" style={{ color: "var(--muted)", letterSpacing: "0.3em" }}>
-            SCROLL
-          </p>
-          <div
-            className="w-px h-12"
-            style={{
-              background:
-                "linear-gradient(to bottom, var(--ember-dim), transparent)",
-            }}
-          />
-        </div>
       </section>
 
       {/* ─── FEATURED PRODUCTS ──────────────────────────────── */}
@@ -163,6 +158,42 @@ export default async function HomePage() {
             </Link>
           </div>
         </div>
+      </section>
+
+      {/* ─── HOW ORDERING WORKS ─────────────────────────────── */}
+      <section className="px-6 pb-20" style={{ background: "var(--void)" }}>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            {
+              title: "Made to order",
+              body: `Printed when you order, then shipped. Most orders arrive in ${PRODUCTION_DAYS}.`,
+            },
+            {
+              title: "Made right",
+              body: "Damaged, misprinted, or the wrong item? Email a photo and I'll replace it or refund you.",
+            },
+            {
+              title: "Secure checkout",
+              body: "Payments are processed by Stripe. Your card details never touch this site.",
+            },
+          ].map((item) => (
+            <div key={item.title} className="p-6" style={{ border: "1px solid var(--border)" }}>
+              <p className="font-display text-xs mb-3" style={{ color: "var(--ember)", letterSpacing: "0.2em" }}>
+                {item.title}
+              </p>
+              <p className="text-sm leading-relaxed" style={{ color: "var(--bone)" }}>
+                {item.body}
+              </p>
+            </div>
+          ))}
+        </div>
+        <p className="max-w-7xl mx-auto mt-6 text-center md:text-left text-xs" style={{ color: "var(--muted)" }}>
+          Questions?{" "}
+          <Link href="/shipping-returns" className="underline" style={{ color: "var(--ember)" }}>
+            Shipping, returns &amp; FAQ
+          </Link>{" "}
+          · <a href={`mailto:${CONTACT_EMAIL}`} className="underline" style={{ color: "var(--ember)" }}>{CONTACT_EMAIL}</a>
+        </p>
       </section>
 
       {/* ─── FIELD GUIDE TEASER ─────────────────────────────── */}
@@ -213,96 +244,13 @@ export default async function HomePage() {
       ABOUT XUVIA
     </p>
 
-    <h2
-      className="font-display text-3xl md:text-5xl mb-10 leading-tight"
-      style={{ color: "var(--silk)", letterSpacing: "0.1em" }}
-    >
-      I made these because I couldn&apos;t find what I was looking for.
-    </h2>
-
-    <div
-      className="space-y-6"
-      style={{ color: "var(--muted)", fontWeight: 300, lineHeight: "1.85" }}
-    >
-      <p>
-        Most tarantula shirts felt like they were designed by people who loved
-        the idea of spiders, not the animals themselves. Stock photos.
-        Halloween graphics. Cheesy slogans. And worst of all, tarantulas
-        perched on orb webs like they&apos;re common garden spiders.
-      </p>
-
-      <p>So I started making my own.</p>
-
-      <p>XUVIA is built for the keepers.</p>
-
-      <p>
-        I know that feeling — the quiet buzz you get just watching your
-        critters. That moment when you&apos;re trying to catch them in exactly
-        the right light, even though it never quite happens. Twenty years in,
-        my heart still pounds when I feed them.
-      </p>
-
-      <p>I wanted to celebrate that feeling.</p>
-
-      <p>
-        I love the funny cartoon spooder shirts as much as anyone, but I wanted
-        the real deal. The fine details. The posture. The color. The patterns.
-        The breathtaking little things that show how stunning these creatures
-        actually are.
-      </p>
-
-      <p>
-        I wanted to carry that buzz with me and share it with others.
-      </p>
-
-      <p>
-        I&apos;ll keep expanding the collections and putting more of our
-        favorites on stage. More species. More styles. Different clothing types.
-        Maybe even pieces beyond clothing down the line.
-      </p>
-
-      <p>
-        The promise is simple: respect for the animals, devotion to the
-        details, and work that comes straight from the heart.
-      </p>
-
-      <p>That&apos;s what XUVIA is.</p>
-
-      <p>And it always will be.</p>
-    </div>
+    <BrandStory />
 
     <hr className="divider-ember mt-12 mb-0" />
   </div>
 </section>
 
      
-      {/* ─── CONTACT ─────────────────────────────────────────── 
-      <section id="contact" className="py-32 px-6" style={{ background: "var(--void)" }}>
-        <div className="max-w-xl mx-auto text-center">
-          <p
-            className="font-mono text-xs mb-6"
-            style={{ color: "var(--ember)", letterSpacing: "0.35em" }}
-          >
-            GET IN TOUCH
-          </p>
-          <h2
-            className="font-display text-2xl md:text-3xl mb-6"
-            style={{ color: "var(--silk)", letterSpacing: "0.12em" }}
-          >
-            Questions? Commissions?
-          </h2>
-          <p className="mb-10 text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
-            Have a species in mind? Want to know about upcoming drops? Reach out.
-          </p>
-          <a
-            href="mailto:hello@xuvia.com"
-            className="btn-primary"
-          >
-            hello@xuvia.com
-          </a>
-        </div>
-      </section>
-*/}
       <Footer />
     </div>
   );

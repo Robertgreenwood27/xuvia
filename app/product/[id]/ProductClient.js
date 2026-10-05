@@ -232,7 +232,7 @@ export default function ProductPage({ product, speciesSlug = null, canonical = n
               </span>
             </div>
 
-            <p className="text-sm leading-relaxed mb-10" style={{ color: "var(--muted)", fontWeight: 300, maxWidth: "420px" }}>
+            <p className="text-sm leading-relaxed mb-10" style={{ color: "var(--bone)", fontWeight: 300, maxWidth: "460px" }}>
               {product.description}
             </p>
 

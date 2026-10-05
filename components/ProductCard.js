@@ -69,10 +69,10 @@ export default function ProductCard({ product, priority = false }) {
 
         {/* CTA */}
         <div
-          className="mt-4 flex items-center gap-2 font-display text-xs"
-          style={{ color: "var(--ember)", letterSpacing: "0.18em" }}
+          className="mt-5 flex items-center justify-center gap-2 font-display text-xs py-3 text-[var(--ember)] transition-colors duration-300 group-hover:bg-[var(--ember)] group-hover:text-[var(--obsidian)]"
+          style={{ letterSpacing: "0.18em", border: "1px solid var(--border-bright)" }}
         >
-          <span>View</span>
+          <span>{product.sizes?.length > 1 ? "Choose Size & Buy" : "Buy Now"}</span>
           <svg
             width="14"
             height="14"

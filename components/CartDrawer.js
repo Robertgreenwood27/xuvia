@@ -144,8 +144,8 @@ export default function CartDrawer() {
                 ${subtotal.toFixed(2)}
               </span>
             </div>
-            <p className="font-mono text-xs mb-5 text-center" style={{ color: "var(--muted)" }}>
-              Shipping calculated at checkout
+            <p className="font-mono text-xs mb-5 text-center leading-relaxed" style={{ color: "var(--muted)" }}>
+              Shipping is shown as soon as you enter your address at checkout, before any payment details.
             </p>
             <Link
               href="/checkout"

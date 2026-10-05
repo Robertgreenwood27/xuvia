@@ -16,8 +16,10 @@ export async function POST(req) {
 
     const result = await calculateShipping(
       {
-        first_name: address.firstName,
-        last_name: address.lastName,
+        // Quotes are requested before the buyer has typed their name — Printify
+        // prices by destination, so placeholders are fine here.
+        first_name: address.firstName || "Customer",
+        last_name: address.lastName || "Customer",
         email: address.email || "",
         phone: address.phone || "",
         country: address.country,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import Link from "next/link";
@@ -8,6 +8,7 @@ import Image from "next/image";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { useCart } from "@/lib/cart";
+import { CONTACT_EMAIL, PRODUCTION_DAYS } from "@/lib/site";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
@@ -113,7 +114,7 @@ function CheckoutForm({ items, subtotal, intentId }) {
   const [shippingLoading, setShippingLoading] = useState(false);
   const [shippingError, setShippingError] = useState("");
 
-  const addressFields = ["firstName","lastName","address1","address2","city","state","zip","country"];
+  const addressFields = ["address1","address2","city","state","zip","country"];
 
   const set = (k) => (e) => {
     let value = e.target.value;
@@ -124,36 +125,42 @@ function CheckoutForm({ items, subtotal, intentId }) {
     setForm((f) => ({ ...f, [k]: value }));
   };
 
-  const addressComplete = form.firstName && form.lastName && form.email && form.phone &&
-    form.address1 && form.city && form.state && form.zip && form.country;
+  // Shipping only depends on where it's going, so quote it as soon as the
+  // address is filled in — before asking for contact or payment details.
+  const addressReady = form.address1 && form.city && form.state && form.zip && form.country;
+  const quoteSeq = useRef(0);
 
-  const calculateShipping = async () => {
-    if (!addressComplete) return;
-    setShippingLoading(true);
-    setShippingError("");
-    setShipping(null);
-    try {
-      const res = await fetch("/api/checkout/shipping", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ address: form, items }),
-      });
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
-      setShipping(data.shipping);
-      if (intentId) {
-        await fetch("/api/checkout/intent", {
-          method: "PATCH",
+  useEffect(() => {
+    if (!addressReady) return;
+    const seq = ++quoteSeq.current;
+    const timer = setTimeout(async () => {
+      setShippingLoading(true);
+      setShippingError("");
+      try {
+        const res = await fetch("/api/checkout/shipping", {
+          method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ intentId, amount: subtotal + data.shipping }),
+          body: JSON.stringify({ address: form, items }),
         });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        if (intentId) {
+          await fetch("/api/checkout/intent", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ intentId, amount: subtotal + data.shipping }),
+          });
+        }
+        if (seq === quoteSeq.current) setShipping(data.shipping);
+      } catch (err) {
+        if (seq === quoteSeq.current) setShippingError("Could not calculate shipping. Please check your address.");
+      } finally {
+        if (seq === quoteSeq.current) setShippingLoading(false);
       }
-    } catch (err) {
-      setShippingError("Could not calculate shipping. Please check your address.");
-    } finally {
-      setShippingLoading(false);
-    }
-  };
+    }, 600);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addressReady, form.address1, form.address2, form.city, form.state, form.zip, form.country, intentId, subtotal]);
 
   const total = subtotal + (shipping ?? 0);
 
@@ -204,35 +211,20 @@ function CheckoutForm({ items, subtotal, intentId }) {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
         {/* ─── FORM ─────────────────────────────────── */}
         <div className="lg:col-span-3 space-y-8">
-          {/* Contact */}
-          <div>
-            <p className="font-display text-xs mb-5" style={{ color: "var(--ember)", letterSpacing: "0.25em" }}>CONTACT</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label style={labelStyle}>FIRST NAME</label>
-                <input required value={form.firstName} onChange={set("firstName")} style={inputStyle} />
-              </div>
-              <div>
-                <label style={labelStyle}>LAST NAME</label>
-                <input required value={form.lastName} onChange={set("lastName")} style={inputStyle} />
-              </div>
-            </div>
-            <div className="mt-4">
-              <label style={labelStyle}>EMAIL ADDRESS</label>
-              <input required type="email" value={form.email} onChange={set("email")} style={inputStyle} />
-            </div>
-            <div className="mt-4">
-              <label style={labelStyle}>PHONE</label>
-              <input required type="tel" value={form.phone} onChange={set("phone")} placeholder="(555) 555-5555" style={inputStyle} />
-            </div>
-          </div>
-
-          <hr style={{ borderColor: "var(--border)" }} />
-
           {/* Shipping */}
           <div>
             <p className="font-display text-xs mb-5" style={{ color: "var(--ember)", letterSpacing: "0.25em" }}>SHIPPING ADDRESS</p>
             <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label style={labelStyle}>FIRST NAME</label>
+                  <input required value={form.firstName} onChange={set("firstName")} style={inputStyle} />
+                </div>
+                <div>
+                  <label style={labelStyle}>LAST NAME</label>
+                  <input required value={form.lastName} onChange={set("lastName")} style={inputStyle} />
+                </div>
+              </div>
               <div>
                 <label style={labelStyle}>COUNTRY</label>
                 <select required value={form.country} onChange={set("country")} style={{ ...inputStyle, cursor: "pointer" }}>
@@ -287,6 +279,33 @@ function CheckoutForm({ items, subtotal, intentId }) {
                   />
                 </div>
               </div>
+
+              {/* Live shipping quote */}
+              <p className="font-mono text-xs" style={{ color: shippingError ? "#ff6b6b" : "var(--muted)" }}>
+                {shippingError
+                  ? shippingError
+                  : shippingLoading
+                  ? "Calculating shipping..."
+                  : shipping !== null
+                  ? `Shipping to ${form.zip}: $${shipping.toFixed(2)} · arrives in ${PRODUCTION_DAYS}`
+                  : "Enter your address to see shipping — no payment details needed yet."}
+              </p>
+            </div>
+          </div>
+
+          <hr style={{ borderColor: "var(--border)" }} />
+
+          {/* Contact */}
+          <div>
+            <p className="font-display text-xs mb-5" style={{ color: "var(--ember)", letterSpacing: "0.25em" }}>CONTACT</p>
+            <p className="text-xs mb-4" style={{ color: "var(--muted)" }}>For your receipt and tracking. No newsletters unless you ask.</p>
+            <div>
+              <label style={labelStyle}>EMAIL ADDRESS</label>
+              <input required type="email" value={form.email} onChange={set("email")} style={inputStyle} />
+            </div>
+            <div className="mt-4">
+              <label style={labelStyle}>PHONE (ONLY USED IF THERE&apos;S A DELIVERY ISSUE)</label>
+              <input required type="tel" value={form.phone} onChange={set("phone")} placeholder="(555) 555-5555" style={inputStyle} />
             </div>
           </div>
 
@@ -294,8 +313,20 @@ function CheckoutForm({ items, subtotal, intentId }) {
 
           {/* Payment */}
           <div>
-            <p className="font-display text-xs mb-5" style={{ color: "var(--ember)", letterSpacing: "0.25em" }}>PAYMENT</p>
+            <div className="flex items-center justify-between mb-5">
+              <p className="font-display text-xs" style={{ color: "var(--ember)", letterSpacing: "0.25em" }}>PAYMENT</p>
+              <p className="flex items-center gap-1.5 font-mono text-xs" style={{ color: "var(--muted)" }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <rect x="3" y="11" width="18" height="11" rx="2" />
+                  <path d="M7 11V7a5 5 0 0110 0v4" />
+                </svg>
+                Secured by Stripe
+              </p>
+            </div>
             <PaymentElement />
+            <p className="text-xs mt-3" style={{ color: "var(--muted)" }}>
+              Your card details go directly to Stripe over an encrypted connection. XUVIA never sees or stores your card number.
+            </p>
           </div>
 
           {error && (
@@ -304,30 +335,14 @@ function CheckoutForm({ items, subtotal, intentId }) {
             </p>
           )}
 
-          {shipping === null && (
-            <button
-              type="button"
-              onClick={calculateShipping}
-              disabled={!addressComplete || shippingLoading}
-              className="btn-primary w-full justify-center"
-              style={{ fontSize: "0.75rem", opacity: (!addressComplete || shippingLoading) ? 0.6 : 1 }}
-            >
-              {shippingLoading ? "Calculating..." : "Calculate Shipping"}
-            </button>
-          )}
-          {shippingError && (
-            <p className="font-mono text-xs p-4" style={{ color: "#ff6b6b", background: "rgba(255,107,107,0.08)", border: "1px solid rgba(255,107,107,0.2)" }}>
-              {shippingError}
-            </p>
-          )}
           <button
             type="submit"
             disabled={loading || !stripe || shipping === null}
             className="btn-primary w-full justify-center"
             style={{ fontSize: "0.75rem", opacity: (loading || shipping === null) ? 0.6 : 1 }}
           >
-            {loading ? "Processing..." : `Pay $${total.toFixed(2)}`}
-            {!loading && (
+            {loading ? "Processing..." : shipping === null ? "Enter address to continue" : `Pay $${total.toFixed(2)}`}
+            {!loading && shipping !== null && (
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
@@ -335,7 +350,9 @@ function CheckoutForm({ items, subtotal, intentId }) {
           </button>
 
           <p className="font-mono text-xs text-center" style={{ color: "var(--muted)" }}>
-            Orders are fulfilled by Printify · Ships in 2–7 business days
+            Printed to order and shipped in {PRODUCTION_DAYS} ·{" "}
+            <Link href="/shipping-returns" className="underline">Shipping &amp; returns</Link> ·{" "}
+            <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a>
           </p>
         </div>
 

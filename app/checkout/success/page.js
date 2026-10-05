@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import { CONTACT_EMAIL } from "@/lib/site";
 import { useCart } from "@/lib/cart";
 
 function SuccessContent() {
@@ -58,7 +59,7 @@ function SuccessContent() {
               It&apos;s on its way.
             </h1>
             <p className="text-sm leading-relaxed mb-3 max-w-md" style={{ color: "var(--muted)", fontWeight: 300 }}>
-              Your order has been placed with Printify. You&apos;ll receive a shipping confirmation email once it leaves the print facility.
+              Your order is in and headed to print. You&apos;ll get a shipping confirmation email with tracking once it leaves the print facility. Questions? Email {CONTACT_EMAIL}.
             </p>
             {orderId && (
               <p className="font-mono text-xs mb-10" style={{ color: "var(--border-bright)", letterSpacing: "0.15em" }}>

@@ -5,7 +5,7 @@ import { speciesList } from "@/lib/species";
 // Bump this when content meaningfully changes. Reporting a stable date (rather
 // than `new Date()` on every request) stops crawlers from treating the whole
 // site as freshly modified and re-crawling — and re-fetching — every page.
-const LAST_MODIFIED = "2026-06-16";
+const LAST_MODIFIED = "2026-10-05";
 
 export default async function sitemap() {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://xuvia.co";
@@ -40,6 +40,8 @@ export default async function sitemap() {
     { url: baseUrl, lastModified: LAST_MODIFIED, changeFrequency: "monthly", priority: 1 },
     { url: `${baseUrl}/shop`, lastModified: LAST_MODIFIED, changeFrequency: "weekly", priority: 0.9 },
     { url: `${baseUrl}/species`, lastModified: LAST_MODIFIED, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${baseUrl}/about`, lastModified: LAST_MODIFIED, changeFrequency: "yearly", priority: 0.5 },
+    { url: `${baseUrl}/shipping-returns`, lastModified: LAST_MODIFIED, changeFrequency: "yearly", priority: 0.4 },
     ...productPages,
     ...speciesPages,
   ];

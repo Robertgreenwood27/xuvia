@@ -43,7 +43,7 @@ export default function Nav() {
           <div className="hidden md:flex items-center gap-10">
             <Link href="/shop" className="nav-link">Shop</Link>
             <Link href="/species" className="nav-link">Field Guide</Link>
-            <Link href="/#about" className="nav-link">About</Link>
+            <Link href="/about" className="nav-link">About</Link>
           </div>
 
           {/* Right: cart + mobile toggle */}
@@ -107,7 +107,8 @@ export default function Nav() {
           {[
             { label: "Shop", href: "/shop" },
             { label: "Field Guide", href: "/species" },
-            { label: "About", href: "/#about" },
+            { label: "About", href: "/about" },
+            { label: "Shipping & Returns", href: "/shipping-returns" },
           ].map((item) => (
             <Link
               key={item.label}
