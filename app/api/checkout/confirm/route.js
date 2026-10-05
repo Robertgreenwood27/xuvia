@@ -1,51 +1,32 @@
 import Stripe from "stripe";
-import { createOrder } from "@/lib/printify";
+import { fulfillPaymentIntent, webhookMode } from "@/lib/order";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
+// Called by the success page to learn what happened to a payment. When the
+// Stripe webhook is configured it owns order creation and this only reports
+// status; otherwise this places the order (still exactly once per payment).
 export async function POST(req) {
-  const { paymentIntentId, address, email, items } = await req.json();
-
-  const pi = await stripe.paymentIntents.retrieve(paymentIntentId);
-
-  if (pi.status !== "succeeded") {
-    return Response.json({ error: "Payment not completed" }, { status: 400 });
-  }
-
-  // In test mode, skip Printify order creation
-  if (process.env.STRIPE_SECRET_KEY?.startsWith("sk_test_")) {
-    return Response.json({
-      success: true,
-      orderId: `TEST-${Date.now()}`,
-    });
-  }
-
   try {
-    const order = await createOrder({
-      label: `XUVIA-${Date.now()}`,
-      line_items: items.map((i) => ({
-        product_id: i.productId,
-        variant_id: i.variantId,
-        quantity: i.quantity,
-      })),
-      shipping_method: 1,
-      send_shipping_notification: true,
-      address_to: {
-        first_name: address.firstName,
-        last_name: address.lastName,
-        email,
-        phone: address.phone || "",
-        country: address.country,
-        region: address.state,
-        address1: address.address1,
-        address2: address.address2 || "",
-        city: address.city,
-        zip: address.zip,
-      },
-    });
+    const { paymentIntentId } = await req.json();
+    if (typeof paymentIntentId !== "string" || !paymentIntentId.startsWith("pi_")) {
+      return Response.json({ status: "unknown" }, { status: 400 });
+    }
+    const pi = await stripe.paymentIntents.retrieve(paymentIntentId);
 
-    return Response.json({ success: true, orderId: order.id });
+    if (pi.status !== "succeeded") {
+      return Response.json({ status: pi.status === "processing" ? "processing" : "unpaid" });
+    }
+    if (pi.metadata?.printify_order_id) {
+      return Response.json({ status: "placed", orderId: pi.metadata.printify_order_id });
+    }
+    if (pi.metadata?.fulfillment_error) return Response.json({ status: "failed" });
+    if (webhookMode()) return Response.json({ status: "processing" });
+
+    const result = await fulfillPaymentIntent(stripe, pi);
+    return Response.json(result);
   } catch (err) {
-    return Response.json({ error: err.message }, { status: 500 });
+    console.error("Confirm error:", err);
+    return Response.json({ status: "failed" }, { status: 500 });
   }
 }

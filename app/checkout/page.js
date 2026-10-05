@@ -100,7 +100,23 @@ const stripeAppearance = {
   },
 };
 
-function CheckoutForm({ items, subtotal, intentId }) {
+async function lockQuote({ intentId, items, address, email }) {
+  const res = await fetch("/api/checkout/intent", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      intentId,
+      email,
+      address,
+      items: items.map((i) => ({ productId: i.productId, variantId: i.variantId, quantity: i.quantity })),
+    }),
+  });
+  const data = await res.json();
+  if (!res.ok || data.error) throw new Error(data.error || "Checkout error");
+  return data;
+}
+
+function CheckoutForm({ items, intentId, subtotal: initialSubtotal }) {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -113,6 +129,7 @@ function CheckoutForm({ items, subtotal, intentId }) {
   const [shipping, setShipping] = useState(null);
   const [shippingLoading, setShippingLoading] = useState(false);
   const [shippingError, setShippingError] = useState("");
+  const [subtotal, setSubtotal] = useState(initialSubtotal);
 
   const addressFields = ["address1","address2","city","state","zip","country"];
 
@@ -137,30 +154,20 @@ function CheckoutForm({ items, subtotal, intentId }) {
       setShippingLoading(true);
       setShippingError("");
       try {
-        const res = await fetch("/api/checkout/shipping", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ address: form, items }),
-        });
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
-        if (intentId) {
-          await fetch("/api/checkout/intent", {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ intentId, amount: subtotal + data.shipping }),
-          });
+        const data = await lockQuote({ intentId, items, address: form });
+        if (seq === quoteSeq.current) {
+          setSubtotal(data.subtotal);
+          setShipping(data.shipping);
         }
-        if (seq === quoteSeq.current) setShipping(data.shipping);
       } catch (err) {
-        if (seq === quoteSeq.current) setShippingError("Could not calculate shipping. Please check your address.");
+        if (seq === quoteSeq.current) setShippingError(err.message || "Could not calculate shipping. Please check your address.");
       } finally {
         if (seq === quoteSeq.current) setShippingLoading(false);
       }
     }, 600);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addressReady, form.address1, form.address2, form.city, form.state, form.zip, form.country, intentId, subtotal]);
+  }, [addressReady, form.address1, form.address2, form.city, form.state, form.zip, form.country, intentId, items]);
 
   const total = subtotal + (shipping ?? 0);
 
@@ -170,26 +177,22 @@ function CheckoutForm({ items, subtotal, intentId }) {
     setLoading(true);
     setError("");
 
-    // Store order data for success page to pick up
-    sessionStorage.setItem("xuvia-pending-order", JSON.stringify({
-      email: form.email,
-      address: {
-        firstName: form.firstName,
-        lastName: form.lastName,
-        phone: form.phone,
-        address1: form.address1,
-        address2: form.address2,
-        city: form.city,
-        state: form.state,
-        zip: form.zip,
-        country: form.country,
-      },
-      items: items.map((i) => ({
-        productId: i.productId,
-        variantId: i.variantId,
-        quantity: i.quantity,
-      })),
-    }));
+    // Lock the final name/email/phone onto the payment and make sure the
+    // amount the server will charge still matches what the buyer sees.
+    try {
+      const data = await lockQuote({ intentId, items, address: form, email: form.email });
+      if (Math.round(data.total * 100) !== Math.round(total * 100)) {
+        setSubtotal(data.subtotal);
+        setShipping(data.shipping);
+        setError(`Your total was updated to $${data.total.toFixed(2)}. Please review and pay again.`);
+        setLoading(false);
+        return;
+      }
+    } catch (err) {
+      setError(err.message || "Could not confirm your order details. Please try again.");
+      setLoading(false);
+      return;
+    }
 
     const { error: stripeError } = await stripe.confirmPayment({
       elements,
@@ -409,22 +412,29 @@ function CheckoutForm({ items, subtotal, intentId }) {
 }
 
 export default function CheckoutPage() {
-  const { items, subtotal, clearCart } = useCart();
+  const { items } = useCart();
   const [clientSecret, setClientSecret] = useState(null);
   const [intentId, setIntentId] = useState(null);
+  const [subtotal, setSubtotal] = useState(null);
+  const [startError, setStartError] = useState("");
 
   useEffect(() => {
     if (items.length === 0) return;
     fetch("/api/checkout/intent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount: subtotal }),
+      body: JSON.stringify({
+        items: items.map((i) => ({ productId: i.productId, variantId: i.variantId, quantity: i.quantity })),
+      }),
     })
       .then((r) => r.json())
       .then((data) => {
+        if (data.error) throw new Error(data.error);
         setClientSecret(data.clientSecret);
         setIntentId(data.intentId);
-      });
+        setSubtotal(data.subtotal);
+      })
+      .catch((err) => setStartError(err.message || "Checkout is temporarily unavailable."));
   }, [items.length]);
 
   if (items.length === 0) {
@@ -450,11 +460,17 @@ export default function CheckoutPage() {
         </h1>
         {clientSecret ? (
           <Elements stripe={stripePromise} options={{ clientSecret, appearance: stripeAppearance }}>
-            <CheckoutForm items={items} subtotal={subtotal} clearCart={clearCart} intentId={intentId} />
+            <CheckoutForm items={items} subtotal={subtotal} intentId={intentId} />
           </Elements>
         ) : (
           <div className="py-20 text-center">
-            <p className="font-mono text-xs" style={{ color: "var(--muted)", letterSpacing: "0.3em" }}>Preparing checkout...</p>
+            {startError ? (
+              <p className="font-mono text-xs" style={{ color: "#ff6b6b" }}>
+                {startError} Questions? <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a>
+              </p>
+            ) : (
+              <p className="font-mono text-xs" style={{ color: "var(--muted)", letterSpacing: "0.3em" }}>Preparing checkout...</p>
+            )}
           </div>
         )}
       </main>
