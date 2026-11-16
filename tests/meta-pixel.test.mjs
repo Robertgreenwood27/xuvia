@@ -31,7 +31,7 @@ function browser(href = "https://xuvia.co/", { storage = new Map(), existingSdk 
 
 afterEach(() => { delete globalThis.window; delete globalThis.document; });
 
-test("initializes once, counts navigation once, and counts a return to a previously viewed product", async () => {
+test("sends one initial PageView, leaves navigation to the SDK, and records product revisits", async () => {
   const { calls } = browser();
   const pixel = await loadPixel();
   pixel.trackPageView();
@@ -46,9 +46,11 @@ test("initializes once, counts navigation once, and counts a return to a previou
   window.location = new URL("https://xuvia.co/product/blue");
   pixel.trackProductView(product);
   assert.equal(calls.filter((call) => call[0] === "init").length, 1);
-  assert.equal(calls.filter((call) => call[2] === "PageView").length, 4);
+  assert.equal(calls.filter((call) => call[2] === "PageView").length, 1);
   assert.equal(calls.filter((call) => call[2] === "ViewContent").length, 2);
   assert.deepEqual(calls[0], ["set", "autoConfig", false, pixel.META_PIXEL_ID]);
+  // History tracking must stay enabled, or subsequent navigations are lost.
+  assert.notEqual(window.fbq.disablePushState, true);
 });
 
 test("queues events while the async SDK loads without adding duplicate scripts", async () => {
