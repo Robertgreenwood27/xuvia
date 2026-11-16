@@ -101,7 +101,8 @@ Easiest path: **Vercel** (free tier works fine for this scale)
 ## Meta advertising measurement
 
 The storefront uses Meta Pixel **1968544077636733**. It initializes once in the
-browser and tracks `PageView` on pathname changes, `ViewContent` on product
+browser and sends the initial `PageView`; Meta's SDK tracks later history
+changes automatically. The site sends `ViewContent` on product
 pages, `AddToCart` on successful cart additions, and `InitiateCheckout` when the
 server creates a checkout. Automatic event detection is disabled; no advanced
 matching fields are configured.
