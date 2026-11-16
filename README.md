@@ -98,6 +98,45 @@ Easiest path: **Vercel** (free tier works fine for this scale)
 
 ---
 
+## Meta advertising measurement
+
+The storefront uses Meta Pixel **1968544077636733**. It initializes once in the
+browser and tracks `PageView` on pathname changes, `ViewContent` on product
+pages, `AddToCart` on successful cart additions, and `InitiateCheckout` when the
+server creates a checkout. Automatic event detection is disabled; no advanced
+matching fields are configured.
+
+`Purchase` is sent only after `/api/checkout/confirm` verifies a **live**, succeeded
+Stripe PaymentIntent with a matching server quote. Its value is the actual
+amount received, including shipping, in the payment currency. It is independent
+of fulfillment status: a paid order still counts while Printify is processing.
+Test-mode and unpaid payments never emit `Purchase`. A stable opaque event ID,
+session storage, and an in-memory fallback prevent repeat events from polling,
+React remounts, or refreshing within the same browser session. Browser blocking
+or closing the tab before returning from payment can prevent measurement;
+Stripe remains the source of truth for sales.
+
+Stripe redirect parameters are removed before initializing or sending to Meta.
+The PaymentIntent ID is retained in history state so confirmation survives a
+refresh. Do not add a separate Pixel snippet, automatic purchase rule, or
+noscript tracking image to the checkout success page.
+
+Tracking is enabled on `xuvia.co` and `www.xuvia.co` only. To exercise it locally
+or on a preview, set `NEXT_PUBLIC_META_PIXEL_DEBUG=true` **at build time** and
+intercept Meta requests so synthetic traffic never reaches the live dataset.
+
+After deployment, open Meta Events Manager → Xuvia → Test events and visit the
+store. Verify `PageView`, a product's `ViewContent`, and one `AddToCart`. A
+completed live order should produce one `Purchase`; refreshing its confirmation
+must not produce another in the same session. Keep Automatic Advanced Matching
+and automatic event detection off to match this manual installation.
+
+Run `npm test` for the tracking checks and `npm run build` to validate the app.
+The build needs the existing Stripe environment variables and access to Google
+Fonts; no new production secrets or environment variables are required.
+
+---
+
 ## Design System
 
 | Token | Value | Use |

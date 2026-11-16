@@ -2,21 +2,21 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { CONTACT_EMAIL } from "@/lib/site";
 import { useCart } from "@/lib/cart";
+import { preparePaymentReturn, trackPageView, trackPurchase } from "@/lib/meta-pixel.mjs";
 
 function SuccessContent() {
-  const params = useSearchParams();
   const { clearCart } = useCart();
   const [orderId, setOrderId] = useState(null);
   const [status, setStatus] = useState("checking");
 
   useEffect(() => {
-    const paymentIntent = params.get("payment_intent");
+    const paymentIntent = preparePaymentReturn();
+    trackPageView();
     if (!paymentIntent) { setStatus("unknown"); return; }
 
     // The order may be placed by the Stripe webhook a moment after we land
@@ -31,6 +31,7 @@ function SuccessContent() {
         });
         const data = await res.json();
         if (cancelled) return;
+        if (res.ok) trackPurchase(data.purchase);
         if (data.status === "placed") {
           setOrderId(data.orderId);
           setStatus("placed");
