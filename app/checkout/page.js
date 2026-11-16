@@ -9,6 +9,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { useCart } from "@/lib/cart";
 import { CONTACT_EMAIL, PRODUCTION_DAYS } from "@/lib/site";
+import { trackCheckoutStart } from "@/lib/meta-pixel.mjs";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
@@ -433,6 +434,7 @@ export default function CheckoutPage() {
         setClientSecret(data.clientSecret);
         setIntentId(data.intentId);
         setSubtotal(data.subtotal);
+        trackCheckoutStart(data.intentId, items, data.subtotal);
       })
       .catch((err) => setStartError(err.message || "Checkout is temporarily unavailable."));
   }, [items.length]);

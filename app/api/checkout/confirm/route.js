@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import { fulfillPaymentIntent, webhookMode } from "@/lib/order";
+import { metaPurchaseForPayment } from "@/lib/meta-purchase.mjs";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -17,14 +18,15 @@ export async function POST(req) {
     if (pi.status !== "succeeded") {
       return Response.json({ status: pi.status === "processing" ? "processing" : "unpaid" });
     }
+    const purchase = metaPurchaseForPayment(pi);
     if (pi.metadata?.printify_order_id) {
-      return Response.json({ status: "placed", orderId: pi.metadata.printify_order_id });
+      return Response.json({ status: "placed", orderId: pi.metadata.printify_order_id, purchase });
     }
-    if (pi.metadata?.fulfillment_error) return Response.json({ status: "failed" });
-    if (webhookMode()) return Response.json({ status: "processing" });
+    if (pi.metadata?.fulfillment_error) return Response.json({ status: "failed", purchase });
+    if (webhookMode()) return Response.json({ status: "processing", purchase });
 
     const result = await fulfillPaymentIntent(stripe, pi);
-    return Response.json(result);
+    return Response.json({ ...result, purchase });
   } catch (err) {
     console.error("Confirm error:", err);
     return Response.json({ status: "failed" }, { status: 500 });

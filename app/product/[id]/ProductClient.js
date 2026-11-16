@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ShareButton from "@/components/ShareButton";
 import { useCart } from "@/lib/cart";
+import { trackProductView } from "@/lib/meta-pixel.mjs";
 
 // Spec rows shown under the divider, keyed by product type.
 const DETAILS_BY_TYPE = {
@@ -110,6 +111,10 @@ export default function ProductPage({ product, speciesSlug = null, canonical = n
   const [sizeError, setSizeError] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
   const { addToCart } = useCart();
+
+  useEffect(() => {
+    trackProductView(product);
+  }, [product]);
 
   if (!product) {
     return (
