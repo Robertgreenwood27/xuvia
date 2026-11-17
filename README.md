@@ -98,6 +98,27 @@ Easiest path: **Vercel** (free tier works fine for this scale)
 
 ---
 
+## Printify collection metadata
+
+Add a hidden HTML comment to a Printify product description to assign its
+collection, product category, and species without editing the repository:
+
+```html
+<!-- xuvia collection:2 type:long-sleeve-shirt species:Latrodectus hesperus -->
+```
+
+The marker must be an actual HTML comment in the description HTML, not escaped
+text. `collection` is a positive whole number. `type:long-sleeve-shirt` maps to
+the existing `long-sleeve` category; existing types such as `poster` and
+`phone-case` also work. Species names can contain spaces. Fields are optional.
+
+Explicit local product overrides take priority, followed by marker values,
+then `lib/catalog.json` defaults. Products without a marker keep their catalog
+metadata. The marker does not appear in the displayed description. Printify
+data is cached for five minutes, so description changes may take that long to
+appear. A marker does not create a new Field Guide page; those entries remain
+in `lib/species.js`.
+
 ## Meta advertising measurement
 
 The storefront uses Meta Pixel **1968544077636733**. It initializes once in the
