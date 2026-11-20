@@ -20,6 +20,11 @@ export async function POST(req) {
     }
     const purchase = metaPurchaseForPayment(pi);
     if (pi.metadata?.printify_order_id) {
+      // Without a webhook, this is also the retry path for confirmation email.
+      if (!webhookMode()) {
+        const result = await fulfillPaymentIntent(stripe, pi);
+        return Response.json({ ...result, purchase });
+      }
       return Response.json({ status: "placed", orderId: pi.metadata.printify_order_id, purchase });
     }
     if (pi.metadata?.fulfillment_error) return Response.json({ status: "failed", purchase });

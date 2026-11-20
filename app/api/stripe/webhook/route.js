@@ -21,7 +21,8 @@ export async function POST(req) {
     // Re-read so a retry sees an order id saved by an earlier delivery.
     const pi = await stripe.paymentIntents.retrieve(event.data.object.id);
     const result = await fulfillPaymentIntent(stripe, pi);
-    // A Printify error gets a 500 so Stripe retries later. Anything else that
+    // A Printify or email delivery error gets a 500 so Stripe retries later.
+    // Existing Printify orders are reused when retrying email. Anything else that
     // failed (bad quote, missing name) is recorded on the payment for manual
     // follow-up — retrying would hit the same problem.
     return Response.json({ received: true, ...result }, { status: result.retryable ? 500 : 200 });
