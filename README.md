@@ -162,6 +162,11 @@ payload changes during a retry, automatic sending stops with
 24-hour idempotency window. Check Resend before any manual resend. Test-mode
 payments never send customer emails. No preview/test endpoint is exposed.
 
+Checkout payments carry `metadata.store=xuvia`. The webhook ignores payments
+without that tag before looking them up or writing fulfillment metadata, so
+other businesses using the same Stripe account are unaffected. The final quote
+also adds the tag to checkouts opened before this change.
+
 ## Meta advertising measurement
 
 The storefront uses Meta Pixel **1968544077636733**. It initializes once in the

@@ -14,7 +14,7 @@ function payment() {
     created: now / 1000, receipt_email: "customer@example.com", currency: "usd",
     amount_received: 6500,
     metadata: {
-      quoted: "1", printify_order_id: "printify-order-1", total_cents: "6500",
+      store: "xuvia", quoted: "1", printify_order_id: "printify-order-1", total_cents: "6500",
       subtotal_cents: "5800", shipping_cents: "700", ship_firstName: "Alex",
       ship_lastName: "Example", ship_address1: "123 Example Street",
       ship_city: "Denver", ship_state: "CO", ship_zip: "80201", ship_country: "US",
@@ -67,6 +67,7 @@ test("disabled, test, unpaid, unfulfilled, inconsistent, and historical payments
     { livemode: false }, { status: "processing" }, { amount_received: 1 },
     { created: now / 1000 - 86400 }, { metadata: { printify_order_id: "" } },
     { metadata: { printify_order_id: "TEST-pi_example" } }, { metadata: { quoted: "0" } },
+    { metadata: { store: "another-business" } }, { metadata: { store: "" } },
   ]) {
     const pi = payment();
     if (change.metadata) Object.assign(pi.metadata, change.metadata);
