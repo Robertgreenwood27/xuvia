@@ -119,6 +119,49 @@ data is cached for five minutes, so description changes may take that long to
 appear. A marker does not create a new Field Guide page; those entries remain
 in `lib/species.js`.
 
+## Customer order confirmation email
+
+Xuvia can send a thank-you email through Resend after a live payment succeeds
+and Printify accepts the order. It includes products, variants, quantities,
+the paid total, and delivery address. It says printing comes next, rather than
+claiming production has already begun. Stripe receipts and Printify shipping
+notifications continue separately.
+
+Sending is **disabled by default**. Use `.env.example` as the settings reference:
+
+1. Add `xuvia.co` in Resend and publish the exact sending DNS records it provides
+   in Vercel. Keep receiving/forwarding MX records separate from any sending
+   subdomain records Resend supplies.
+2. Configure an inbox or forwarding service for `hello@xuvia.co`, then verify
+   incoming mail and replies. Vercel hosts DNS, not the mailbox.
+3. Add a dedicated, domain-scoped sending key as `RESEND_API_KEY` in the Vercel
+   Xuvia project's Production environment. Set `ORDER_EMAIL_FROM` and
+   `ORDER_EMAIL_REPLY_TO` as shown in `.env.example`.
+4. Ensure Stripe delivers `payment_intent.succeeded` to
+   `https://xuvia.co/api/stripe/webhook` with the matching `STRIPE_WEBHOOK_SECRET`.
+   This makes email retries independent of the buyer keeping their tab open.
+5. Set `ORDER_EMAIL_START_AT` to the UTC launch time and
+   `ORDER_EMAIL_ENABLED=true`, then deploy. Payments created before that time
+   are skipped, so enabling the feature does not email historical customers.
+6. Send an explicitly authorized preview to your own inbox before enabling.
+   Verify sender, replies, and mobile layout. After launch, check the first
+   real order's email in Resend and its confirmation metadata in Stripe.
+
+Generate an HTML preview without sending anything:
+
+```sh
+node scripts/preview-order-email.mjs
+```
+
+Delivery uses a stable Resend idempotency key and stores the accepted email ID
+on the Stripe payment. Email failures cause webhook retries while reusing the
+existing Printify order. Resend acceptance does not prove inbox delivery; check
+Resend's delivery/bounce status. If a delivery is uncertain for 23 hours, or its
+payload changes during a retry, automatic sending stops with
+`delivery_needs_review` in server logs to avoid duplicates after Resend's
+24-hour idempotency window. Check Resend before any manual resend. Test-mode
+payments never send customer emails. No preview/test endpoint is exposed.
+
 ## Meta advertising measurement
 
 The storefront uses Meta Pixel **1968544077636733**. It initializes once in the
