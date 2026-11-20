@@ -56,10 +56,14 @@ test("customer and product text cannot introduce HTML or links", () => {
   const pi = payment();
   pi.metadata.ship_firstName = '<img src="https://bad.test">';
   pi.metadata.ship_address1 = "<script>alert(1)</script>";
-  const message = buildOrderEmail(pi, [{ title: "<b>Product</b>", quantity: 1 }], { from: "hello@xuvia.co", replyTo: "hello@xuvia.co" });
+  const message = buildOrderEmail(pi, [{ title: "<b>Product</b>", quantity: 1, image: "javascript:alert(1)" }], { from: "hello@xuvia.co", replyTo: "hello@xuvia.co" });
   assert.ok(!message.html.includes("<script>"));
-  assert.ok(!message.html.includes("<img"));
+  assert.ok(!message.html.includes('<img src="https://bad.test"'));
   assert.ok(message.html.includes("&lt;b&gt;Product&lt;/b&gt;"));
+  assert.ok(!message.html.includes("javascript:"));
+  const validImage = "https://images.printify.com/mockup/example.png";
+  const withImage = buildOrderEmail(payment(), [{ ...items[0], image: validImage }], { from: "hello@xuvia.co", replyTo: "hello@xuvia.co" });
+  assert.ok(withImage.html.includes(validImage));
 });
 
 test("disabled, test, unpaid, unfulfilled, inconsistent, and historical payments do not send", async () => {

@@ -153,6 +153,13 @@ Generate an HTML preview without sending anything:
 node scripts/preview-order-email.mjs
 ```
 
+The customer template uses the storefront's spider emblem, obsidian backgrounds,
+ember-gold accents, spaced display lettering, and keeper-focused voice. Product
+thumbnails use the ordered variant when available. HTML uses table layouts,
+inline styles, narrow-screen adjustments, and system font fallbacks, alongside a
+plain-text version. `scripts/order-email-sample.mjs` renders fictional order
+details with real catalog images through the exact same customer renderer.
+
 Delivery uses a stable Resend idempotency key and stores the accepted email ID
 on the Stripe payment. Email failures cause webhook retries while reusing the
 existing Printify order. Resend acceptance does not prove inbox delivery; check
