@@ -153,6 +153,13 @@ Generate an HTML preview without sending anything:
 node scripts/preview-order-email.mjs
 ```
 
+The customer template uses the storefront's spider emblem, obsidian backgrounds,
+ember-gold accents, spaced display lettering, and keeper-focused voice. Product
+thumbnails use the ordered variant when available. HTML uses table layouts,
+inline styles, narrow-screen adjustments, and system font fallbacks, alongside a
+plain-text version. `scripts/order-email-sample.mjs` renders fictional order
+details with real catalog images through the exact same customer renderer.
+
 Delivery uses a stable Resend idempotency key and stores the accepted email ID
 on the Stripe payment. Email failures cause webhook retries while reusing the
 existing Printify order. Resend acceptance does not prove inbox delivery; check
@@ -161,6 +168,11 @@ payload changes during a retry, automatic sending stops with
 `delivery_needs_review` in server logs to avoid duplicates after Resend's
 24-hour idempotency window. Check Resend before any manual resend. Test-mode
 payments never send customer emails. No preview/test endpoint is exposed.
+
+Checkout payments carry `metadata.store=xuvia`. The webhook ignores payments
+without that tag before looking them up or writing fulfillment metadata, so
+other businesses using the same Stripe account are unaffected. The final quote
+also adds the tag to checkouts opened before this change.
 
 ## Meta advertising measurement
 

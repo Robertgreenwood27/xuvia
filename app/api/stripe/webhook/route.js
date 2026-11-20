@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import { fulfillPaymentIntent } from "@/lib/order";
+import { isXuviaPaymentIntent } from "@/lib/checkout-identity.mjs";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -18,6 +19,10 @@ export async function POST(req) {
   }
 
   if (event.type === "payment_intent.succeeded") {
+    // Other businesses share this Stripe account. Never touch their payments.
+    if (!isXuviaPaymentIntent(event.data.object)) {
+      return Response.json({ received: true, ignored: true });
+    }
     // Re-read so a retry sees an order id saved by an earlier delivery.
     const pi = await stripe.paymentIntents.retrieve(event.data.object.id);
     const result = await fulfillPaymentIntent(stripe, pi);
